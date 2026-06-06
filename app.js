@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initQuizFlow();
   initExamFlow(); // Initialize practice exams handlers
   initKeyboardShortcuts();
+  initDistractionWidget(); // Initialize daydream distraction loops
 });
 
 // Load state from LocalStorage
@@ -948,4 +949,62 @@ function showExamResults() {
 
   document.getElementById("exam-runner-panel").style.display = "none";
   document.getElementById("exam-results-view").style.display = "block";
+}
+
+// Sidebar Distraction Widget / Daydream Mode Handler
+function initDistractionWidget() {
+  const btnSubway = document.getElementById("distraction-subway");
+  const btnMinecraft = document.getElementById("distraction-minecraft");
+  const btnToggle = document.getElementById("distraction-toggle");
+  const body = document.getElementById("distraction-body");
+  const iframe = document.getElementById("distraction-iframe");
+
+  if (!btnSubway || !btnMinecraft || !btnToggle || !body || !iframe) return;
+
+  const subwayUrl = "https://www.youtube.com/embed/zZ7AimPACzc?autoplay=1&loop=1&playlist=zZ7AimPACzc&mute=1&controls=0";
+  const minecraftUrl = "https://www.youtube.com/embed/-lVgihPljuI?autoplay=1&loop=1&playlist=-lVgihPljuI&mute=1&controls=0";
+
+  // Load saved visual state of daydream mode (collapsed/expanded)
+  const isCollapsed = localStorage.getItem("cloudmaster_distraction_collapsed") === "true";
+  if (isCollapsed) {
+    body.classList.add("collapsed");
+    btnToggle.textContent = "🙈";
+  }
+
+  // Load saved video source
+  const currentVideo = localStorage.getItem("cloudmaster_distraction_video") || "subway";
+  if (currentVideo === "minecraft") {
+    btnSubway.classList.remove("active");
+    btnMinecraft.classList.add("active");
+    iframe.src = minecraftUrl;
+  } else {
+    btnSubway.classList.add("active");
+    btnMinecraft.classList.remove("active");
+    iframe.src = subwayUrl;
+  }
+
+  // Event handler to switch to Subway Surfers
+  btnSubway.addEventListener("click", () => {
+    if (btnSubway.classList.contains("active")) return;
+    btnSubway.classList.add("active");
+    btnMinecraft.classList.remove("active");
+    iframe.src = subwayUrl;
+    localStorage.setItem("cloudmaster_distraction_video", "subway");
+  });
+
+  // Event handler to switch to Minecraft
+  btnMinecraft.addEventListener("click", () => {
+    if (btnMinecraft.classList.contains("active")) return;
+    btnMinecraft.classList.add("active");
+    btnSubway.classList.remove("active");
+    iframe.src = minecraftUrl;
+    localStorage.setItem("cloudmaster_distraction_video", "minecraft");
+  });
+
+  // Event handler to collapse/expand
+  btnToggle.addEventListener("click", () => {
+    const collapsedNow = body.classList.toggle("collapsed");
+    btnToggle.textContent = collapsedNow ? "🙈" : "👁️";
+    localStorage.setItem("cloudmaster_distraction_collapsed", collapsedNow ? "true" : "false");
+  });
 }
