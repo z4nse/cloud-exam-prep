@@ -1,0 +1,29 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Python project tooling (not needed for static site)
+pyproject.toml
+uv.lock
+main.py
+.python-version
+
+# Raw exam PDF files (copyright - do not publish)
+*.pdf
+*.pdf.txt
+*.txt
+
+# Raw Obsidian notes (source material - keep private)
+notes.md
+Cluster\ &\ Cloud\ Computing.md
+
+# Pasted lecture slide images (keep private)
+Pasted\ Graphic\ 1.png
+Pasted\ image\ *.png

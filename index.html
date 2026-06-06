@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudMaster | Cluster & Cloud Computing Study App</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="app-container">
+    <!-- Sidebar Navigation -->
+    <sidebar>
+      <div class="brand-section">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24">
+            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
+          </svg>
+        </div>
+        <span class="brand-name">CloudMaster</span>
+      </div>
+
+      <ul class="nav-menu">
+        <li>
+          <a class="nav-item active" id="nav-dashboard">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="9"></rect>
+              <rect x="14" y="3" width="7" height="5"></rect>
+              <rect x="14" y="12" width="7" height="9"></rect>
+              <rect x="3" y="16" width="7" height="5"></rect>
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" id="nav-study">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            Study Cards
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" id="nav-quiz">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Quiz Mode
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" id="nav-browser">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            Card Browser
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" id="nav-exams">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Practice Exams
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-stats">
+        <div class="sidebar-stats-title">Mastery Progress</div>
+        <div class="sidebar-progress-bar">
+          <div class="sidebar-progress-fill" id="overall-progress-bar"></div>
+        </div>
+        <div class="sidebar-progress-text">
+          <span id="overall-progress-text">0%</span>
+          <span id="overall-ratio-text">0/88 Cards</span>
+        </div>
+      </div>
+    </sidebar>
+
+    <!-- Main Content Panel -->
+    <main>
+      
+      <!-- VIEW: DASHBOARD -->
+      <div id="view-dashboard" class="view-section active">
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Select a topic deck to begin studying for your Cluster & Cloud Computing exams.</p>
+
+        <!-- Stats row -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-total-cards">88</span>
+              <span class="stat-label">Total Cards</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon secondary">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-easy-cards">0</span>
+              <span class="stat-label">Mastered (Easy)</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon accent">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-accuracy">0%</span>
+              <span class="stat-label">Quiz Accuracy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <span>Study Decks</span>
+        </div>
+
+        <!-- Decks Grid -->
+        <div class="deck-grid" id="decks-container">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- VIEW: STUDY ZONE -->
+      <div id="view-study" class="view-section">
+        <div class="study-header">
+          <button class="back-btn" id="study-back-btn">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Dashboard
+          </button>
+          <div class="study-progress-container">
+            <div class="study-progress-bg">
+              <div class="study-progress-fill" id="study-progress-fill"></div>
+            </div>
+            <span id="study-progress-text" style="font-size: 0.85rem; color: var(--text-secondary);">Card 1 / 10</span>
+          </div>
+        </div>
+
+        <!-- 3D Flashcard Container -->
+        <div class="flashcard-wrapper" id="flashcard-container">
+          <div class="flashcard" id="interactive-card">
+            <!-- Front Face -->
+            <div class="card-face card-front">
+              <span class="card-tag" id="card-tag-front">Week 1</span>
+              <div class="card-content-area" id="card-question-text">
+                Question will appear here.
+              </div>
+              <div class="card-hint">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                </svg>
+                Click card or press Space to reveal answer
+              </div>
+            </div>
+            <!-- Back Face -->
+            <div class="card-face card-back">
+              <span class="card-tag" id="card-tag-back">Week 1</span>
+              <div class="card-content-area" id="card-answer-text">
+                Answer will appear here.
+              </div>
+              <div class="card-hint">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                </svg>
+                Click card to view question again
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rating controls -->
+        <div class="rating-bar" id="rating-bar">
+          <button class="rating-btn hard-btn" data-score="hard">
+            Hard
+            <span>Review soon (1)</span>
+          </button>
+          <button class="rating-btn medium-btn" data-score="medium">
+            Medium
+            <span>Review later (2)</span>
+          </button>
+          <button class="rating-btn easy-btn" data-score="easy">
+            Easy
+            <span>Mastered (3)</span>
+          </button>
+        </div>
+
+        <!-- Shortcuts Legend -->
+        <div class="shortcuts-legend">
+          Shortcuts: <kbd class="kbd">Space</kbd> Flip | 
+          <kbd class="kbd">1</kbd> Hard | 
+          <kbd class="kbd">2</kbd> Medium | 
+          <kbd class="kbd">3</kbd> Easy
+        </div>
+      </div>
+
+      <!-- VIEW: QUIZ ZONE -->
+      <div id="view-quiz" class="view-section">
+        <div class="study-header">
+          <button class="back-btn" id="quiz-back-btn">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Dashboard
+          </button>
+          <span id="quiz-header-status" style="font-family: var(--font-display); font-weight: 600; color: var(--text-secondary);">Question 1 of 10</span>
+        </div>
+
+        <!-- Quiz Panel Box -->
+        <div class="glass-panel quiz-panel">
+          <div id="quiz-setup-panel">
+            <h2 style="font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 1rem;">Start Quiz</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Test your knowledge on Cluster & Cloud Computing with a randomized 10-question multiple choice test based on your notes.</p>
+            <button class="quiz-btn" id="start-quiz-btn">Start 10-Question Quiz</button>
+          </div>
+
+          <div id="quiz-active-panel" style="display: none;">
+            <div class="quiz-question-card">
+              <span class="card-tag" id="quiz-question-tag" style="margin-bottom: 1rem; display: inline-block;">Week 1</span>
+              <div class="quiz-question-text" id="quiz-question-text">Question content?</div>
+            </div>
+            
+            <div class="quiz-options" id="quiz-options-container">
+              <!-- Choices dynamically generated -->
+            </div>
+
+            <div class="quiz-feedback" id="quiz-feedback-box">
+              Feedback description here.
+            </div>
+
+            <div class="quiz-footer">
+              <span id="quiz-score-indicator" style="font-size: 0.9rem; color: var(--text-muted);">Current Score: 0/0</span>
+              <button class="quiz-btn" id="quiz-next-btn" disabled>Next Question</button>
+            </div>
+          </div>
+
+          <!-- Quiz Results screen -->
+          <div id="quiz-results-panel" style="display: none; text-align: center; padding: 2rem 0;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🏆</div>
+            <h2 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 0.5rem;" id="quiz-results-title">Quiz Completed!</h2>
+            <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem;" id="quiz-results-summary">You scored 8 out of 10 (80%).</p>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+              <button class="quiz-btn" id="quiz-retry-btn">Try Again</button>
+              <button class="quiz-btn" id="quiz-close-btn" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); box-shadow: none;">Back to Dashboard</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW: CARD BROWSER -->
+      <div id="view-browser" class="view-section">
+        <h1>Card Browser</h1>
+        <p class="subtitle">Search, filter, and review the entire repository of study cards in list format.</p>
+
+        <div class="browser-controls">
+          <input type="text" class="search-input" id="browser-search" placeholder="Search questions, answers, or tags (e.g. CAP, Docker)...">
+          <select class="filter-select" id="browser-filter-week">
+            <option value="all">All Weeks</option>
+            <option value="1">Week 1: Fundamentals</option>
+            <option value="2">Week 2: Scaling & Architecture</option>
+            <option value="3">Week 3: HPC & Spartan</option>
+            <option value="4">Week 4: Cloud & OpenStack</option>
+            <option value="5">Week 5: Containers & CI/CD</option>
+            <option value="6">Week 6: K8s & REST APIs</option>
+            <option value="7">Week 7: Serverless FaaS</option>
+            <option value="8">Week 8: Big Data & ES</option>
+            <option value="9">Week 9: Virtualization & AWS</option>
+            <option value="10">Week 10: Cloud Security</option>
+          </select>
+        </div>
+
+        <div class="card-list" id="browser-cards-list">
+          <!-- Dynamically populated row list -->
+        </div>
+      </div>
+
+      <!-- VIEW: PRACTICE EXAMS -->
+      <div id="view-exams" class="view-section">
+        <h1>Practice Exams</h1>
+        <p class="subtitle">Test your preparation under realistic exam settings. Every practice exam features exactly 35 marks of multiple-choice questions and 15 marks of short-answer questions (50 marks total).</p>
+
+        <!-- Exam dashboard -->
+        <div id="exam-dashboard-panel">
+          <div class="section-header">
+            <span>Available Exams</span>
+          </div>
+          <div class="deck-grid" id="exams-list-container">
+            <!-- Dynamic Exam Cards -->
+          </div>
+
+          <div class="section-header" style="margin-top: 3rem;">
+            <span>Exam Attempt History</span>
+          </div>
+          <div class="glass-panel" style="padding: 1.5rem; overflow-x: auto;">
+            <table class="history-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--glass-border); color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <th style="padding: 0.75rem 1rem;">Date/Time</th>
+                  <th style="padding: 0.75rem 1rem;">Exam Title</th>
+                  <th style="padding: 0.75rem 1rem;">Type</th>
+                  <th style="padding: 0.75rem 1rem; text-align: right;">MCQ Score</th>
+                  <th style="padding: 0.75rem 1rem; text-align: right;">SA Score</th>
+                  <th style="padding: 0.75rem 1rem; text-align: right;">Total Score</th>
+                  <th style="padding: 0.75rem 1rem; text-align: center;">Grade</th>
+                </tr>
+              </thead>
+              <tbody id="exam-history-tbody">
+                <!-- Attempt entries -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Exam Runner view -->
+        <div id="exam-runner-panel" style="display: none;">
+          <div class="study-header">
+            <button class="back-btn" id="exam-quit-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Quit Exam
+            </button>
+            <div style="display: flex; gap: 1.5rem; align-items: center;">
+              <div class="timer-display" id="exam-timer">Time Elapsed: 00:00</div>
+              <div class="study-progress-container" style="width: 250px;">
+                <div class="study-progress-bg">
+                  <div class="study-progress-fill" id="exam-progress-fill" style="width: 0%;"></div>
+                </div>
+                <span id="exam-progress-text" style="font-size: 0.85rem; color: var(--text-secondary);">MCQ 1 of 35</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-panel" style="padding: 2rem; margin-top: 1rem; position: relative;">
+            <div id="exam-mcq-section">
+              <div class="quiz-question-card">
+                <span class="card-tag" id="exam-mcq-tag">Question 1 of 35 (MCQ)</span>
+                <div class="quiz-question-text" id="exam-mcq-text" style="font-size: 1.35rem; margin-top: 0.5rem;">MCQ Question content?</div>
+              </div>
+              <div class="quiz-options" id="exam-mcq-options" style="margin-top: 1.5rem;">
+                <!-- MCQ option buttons -->
+              </div>
+              <div class="quiz-feedback" id="exam-mcq-feedback" style="margin-top: 1rem; display: none;"></div>
+              <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                <button class="quiz-btn" id="exam-mcq-submit" disabled>Check Answer</button>
+                <button class="quiz-btn" id="exam-mcq-next" style="display: none;">Next Question</button>
+              </div>
+            </div>
+
+            <div id="exam-sa-section" style="display: none;">
+              <div class="quiz-question-card">
+                <span class="card-tag" id="exam-sa-tag">Question 1 of 3 (Short Answer)</span>
+                <div class="quiz-question-text" id="exam-sa-text" style="font-size: 1.3rem; margin-top: 0.5rem; line-height: 1.5;">Short Answer Question?</div>
+              </div>
+              <div style="margin-top: 1.5rem;">
+                <label style="display: block; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Write your answer draft here:</label>
+                <textarea id="exam-sa-input" rows="8" style="width: 100%; padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 8px; color: #fff; font-family: inherit; font-size: 1rem; line-height: 1.5; resize: vertical;" placeholder="Type your detailed response here..."></textarea>
+              </div>
+
+              <!-- Reveal answer and self grading details -->
+              <div id="exam-sa-grading-block" style="display: none; margin-top: 2rem; padding: 1.5rem; background: rgba(99,102,241,0.05); border: 1px solid rgba(99,102,241,0.2); border-radius: 8px;">
+                <h3 style="color: var(--primary); font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 0.75rem;">Model Answer / Marking Guide:</h3>
+                <div id="exam-sa-model-answer" style="color: var(--text-secondary); font-size: 1rem; line-height: 1.6; white-space: pre-wrap; margin-bottom: 1.5rem;"></div>
+                
+                <div style="border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+                  <label id="exam-sa-grade-label" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Self-Grade your response: 0 / 5 Marks</label>
+                  <div style="display: flex; gap: 1rem; align-items: center;">
+                    <input type="range" id="exam-sa-grade-slider" min="0" max="5" value="0" style="flex-grow: 1; accent-color: var(--primary);">
+                    <span id="exam-sa-slider-value" style="font-size: 1.25rem; font-weight: 700; width: 40px; text-align: center;">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                <button class="quiz-btn" id="exam-sa-reveal-btn">Reveal Marking Guide</button>
+                <button class="quiz-btn" id="exam-sa-next" style="display: none;">Save & Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exam Results view -->
+        <div id="exam-results-view" style="display: none; margin-top: 1rem;">
+          <div class="glass-panel" style="padding: 3rem; text-align: center; max-width: 800px; margin: 0 auto;">
+            <div style="font-size: 5rem; margin-bottom: 1rem;">🎓</div>
+            <h2 style="font-family: var(--font-display); font-size: 2.25rem; margin-bottom: 0.5rem;" id="exam-results-title-h2">Exam Completed!</h2>
+            <p id="exam-results-type-badge" style="display: inline-block; padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1.5rem;">Past Exam</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 2rem 0; background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--glass-border);">
+              <div>
+                <div style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">MCQ Score</div>
+                <div id="exam-results-mcq-score" style="font-size: 1.75rem; font-weight: 700; margin-top: 0.25rem;">0 / 35</div>
+              </div>
+              <div>
+                <div style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">SA Score</div>
+                <div id="exam-results-sa-score" style="font-size: 1.75rem; font-weight: 700; margin-top: 0.25rem;">0 / 15</div>
+              </div>
+              <div>
+                <div style="color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Overall Grade</div>
+                <div id="exam-results-grade" style="font-size: 1.75rem; font-weight: 700; margin-top: 0.25rem; color: var(--primary);">H1</div>
+              </div>
+            </div>
+
+            <div style="color: var(--text-secondary); margin-bottom: 2rem;">
+              Total Score: <strong id="exam-results-total-score" style="font-size: 1.25rem; color: #fff;">0 / 50 (0%)</strong><br>
+              Time Taken: <strong id="exam-results-time-taken" style="color: #fff;">00:00</strong>
+            </div>
+
+            <button class="quiz-btn" id="exam-results-close-btn" style="padding: 0.75rem 2rem;">Back to Exams Dashboard</button>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="cards.js?v=1.0.2"></script>
+  <script src="exams.js?v=1.0.2"></script>
+  <script src="app.js?v=1.0.2"></script>
+</body>
+</html>
+
