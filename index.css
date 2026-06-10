@@ -1019,3 +1019,80 @@ h1 {
     display: none !important;
   }
 }
+
+/* ==========================================
+   EXAM MCQ REVIEW / VIEWBACK STYLING
+   ========================================== */
+
+.review-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: var(--transition-smooth);
+}
+
+.review-card:hover {
+  border-color: var(--glass-border-hover);
+  transform: translateY(-2px);
+}
+
+.review-card.correct-card {
+  border-left: 4px solid var(--color-easy);
+}
+
+.review-card.incorrect-card {
+  border-left: 4px solid var(--color-hard);
+}
+
+.review-card .quiz-option {
+  pointer-events: none;
+  cursor: default;
+  transition: none;
+  transform: none;
+}
+
+.review-card .quiz-option:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--glass-border);
+  transform: none;
+}
+
+/* Override correct/incorrect selected states in review */
+.review-card .quiz-option.correct {
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-color: var(--color-easy) !important;
+  color: var(--color-easy) !important;
+}
+
+.review-card .quiz-option.incorrect {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: var(--color-hard) !important;
+  color: var(--color-hard) !important;
+}
+
+.review-card .quiz-feedback {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.filter-review-btn {
+  transition: var(--transition-smooth);
+}
+
+.filter-review-btn:not(.active) {
+  opacity: 0.6;
+  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--glass-border);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+
+.filter-review-btn.active {
+  opacity: 1;
+}
