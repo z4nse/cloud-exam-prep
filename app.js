@@ -273,6 +273,66 @@ function shuffle(array) {
   return array;
 }
 
+// Dynamically pad shorter options to make MCQ options relatively equal in length
+function adjustOptionLengths(options) {
+  let adjusted = [...options];
+  
+  // Find the max length
+  let maxLength = 0;
+  for (const opt of adjusted) {
+    if (opt.length > maxLength) {
+      maxLength = opt.length;
+    }
+  }
+
+  // If the longest option is short, no need to pad
+  if (maxLength < 40) {
+    return adjusted;
+  }
+
+  const fillers = [
+    ", to optimize resource utilization across multi-tenant environments",
+    " as defined in standard distributed systems architecture guidelines",
+    ", maintaining operational efficiency and scaling boundaries",
+    " within a secure private cloud network configuration framework",
+    " to prevent single points of failure in federated clusters",
+    ", complying with NIST cloud service specifications and models",
+    " to ensure high availability and partition tolerance standards",
+    ", balancing compute workloads across parallel processor nodes",
+    ", reducing inter-process communication overhead in clusters",
+    " in accordance with standard cloud service level agreements (SLAs)",
+    " to support high-throughput execution under peak user demand",
+    ", minimizing CPU scheduling latency and memory virtualization overhead",
+    " as required to scale modern stateful applications across zones",
+    " to guarantee data integrity during unexpected network partitions"
+  ];
+
+  for (let i = 0; i < adjusted.length; i++) {
+    let opt = adjusted[i];
+    
+    // Skip padding if:
+    // - Option is already long enough (within 20 chars of maxLength)
+    // - Option is too short (<= 10 chars, like "SaaS", "SISD")
+    // - Option is a meta-option like "None of the above"
+    if (opt.length >= maxLength - 20) continue;
+    if (opt.length <= 10) continue;
+    if (opt.toLowerCase().includes("above") || opt.toLowerCase().includes("none of the")) continue;
+
+    // Pick a random filler
+    const randomFiller = fillers[Math.floor(Math.random() * fillers.length)];
+    
+    // Clean trailing period
+    let cleanOpt = opt.trim();
+    if (cleanOpt.endsWith(".")) {
+      cleanOpt = cleanOpt.substring(0, cleanOpt.length - 1);
+    }
+    
+    adjusted[i] = cleanOpt + randomFiller;
+  }
+
+  return adjusted;
+}
+
 // Render the current active flashcard
 function renderActiveCard() {
   const card = state.studyCards[state.studyIndex];
@@ -475,16 +535,55 @@ function renderQuizQuestion() {
   // Generate Options (1 correct, 3 incorrect random answers)
   const choices = [card.answer];
   
-  // Gather unique incorrect answers from other cards of similar length to prevent length-based guessing
-  const targetLength = card.answer.length;
-  const uniqueOtherAnswers = Array.from(new Set(window.FLASHCARDS.filter(c => c.id !== card.id).map(c => c.answer)));
-  uniqueOtherAnswers.sort((a, b) => Math.abs(a.length - targetLength) - Math.abs(b.length - targetLength));
-  
-  // Select 3 unique incorrect answers from the top 12 closest options by length to maintain randomness
-  const closestPool = uniqueOtherAnswers.slice(0, 12);
-  const otherAnswers = shuffle(closestPool);
-  for (let i = 0; i < 3; i++) {
-    if (otherAnswers[i]) choices.push(otherAnswers[i]);
+  // Gather unique incorrect answers from other cards based on relatedness (week/topic) and similar length
+  const otherCards = window.FLASHCARDS.filter(c => c.id !== card.id);
+  const scoredOtherCards = otherCards.map(c => {
+    let score = 0;
+    
+    // 1. Same week gets highest priority to ensure topical relatedness
+    if (c.week === card.week) {
+      score += 1000;
+    } else if (Math.abs(c.week - card.week) === 1) {
+      // 2. Adjacent weeks get some priority
+      score += 200;
+    }
+    
+    // 3. Same topic gets priority
+    if (c.topic.toLowerCase() === card.topic.toLowerCase()) {
+      score += 500;
+    } else {
+      // Overlapping words in topic string
+      const cWords = c.topic.toLowerCase().split(/\s+/);
+      const targetWords = card.topic.toLowerCase().split(/\s+/);
+      if (cWords.some(w => targetWords.includes(w))) {
+        score += 100;
+      }
+    }
+    
+    // 4. Length penalty (absolute difference in length)
+    score -= Math.abs(c.answer.length - card.answer.length) * 2;
+    
+    return { answer: c.answer, score: score };
+  });
+
+  // Sort descending by score
+  scoredOtherCards.sort((a, b) => b.score - a.score);
+
+  // Extract unique answers in scored order
+  const uniqueAnswersPool = [];
+  const seenAnswers = new Set([card.answer]);
+  for (const item of scoredOtherCards) {
+    if (!seenAnswers.has(item.answer)) {
+      seenAnswers.add(item.answer);
+      uniqueAnswersPool.push(item.answer);
+      if (uniqueAnswersPool.length >= 10) break; // Keep the top 10 best options
+    }
+  }
+
+  // Shuffle the pool and select 3 unique options
+  const otherAnswers = shuffle(uniqueAnswersPool).slice(0, 3);
+  for (const ans of otherAnswers) {
+    choices.push(ans);
   }
   
   // Shuffle options
@@ -897,8 +996,11 @@ function renderExamMCQ() {
   document.getElementById("exam-mcq-tag").textContent = `Question ${state.examMcqIndex + 1} of 35 (MCQ - 1 Mark)`;
   document.getElementById("exam-mcq-text").textContent = mcq.question;
 
+  // Dynamic Option Length Equalization to prevent guessing by option length
+  const paddedOptions = adjustOptionLengths(mcq.options);
+
   // Map and shuffle options
-  state.examCurrentShuffledOptions = mcq.options.map((option, idx) => ({
+  state.examCurrentShuffledOptions = paddedOptions.map((option, idx) => ({
     text: option,
     originalIdx: idx
   }));
@@ -962,10 +1064,14 @@ function checkExamMCQ() {
     state.examMcqScore++;
   }
 
-  // Record details for MCQ Viewback
+  // Record details for MCQ Viewback (using the padded options in original order so viewback matches exam)
+  const paddedOptionsOrdered = [...state.examCurrentShuffledOptions]
+    .sort((a, b) => a.originalIdx - b.originalIdx)
+    .map(opt => opt.text);
+
   state.examMcqAnswers.push({
     question: mcq.question,
-    options: mcq.options, // Save the original options order so viewback renders consistently
+    options: paddedOptionsOrdered,
     correctAnswerIdx: mcq.answer,
     selectedAnswerIdx: originalSelectedIdx,
     explanation: mcq.explanation
