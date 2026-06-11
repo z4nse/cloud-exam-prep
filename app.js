@@ -43,6 +43,7 @@ let state = {
   examSaScore: 0,
   examAnswersChecked: false,
   examSelectedOptionIndex: null,
+  examSelectedOptionIndices: [],
   examTimeStart: 0,
   examTimerInterval: null,
   examHistory: [],
@@ -881,7 +882,19 @@ function renderReviewCards(mcqAnswers) {
   container.innerHTML = "";
 
   mcqAnswers.forEach((ans, idx) => {
-    const isCorrect = (ans.selectedAnswerIdx === ans.correctAnswerIdx);
+    const isMultiple = Array.isArray(ans.correctAnswerIdx);
+    let isCorrect = false;
+    
+    if (isMultiple) {
+      const correctList = ans.correctAnswerIdx;
+      const selectedList = ans.selectedAnswerIdx || [];
+      const allCorrect = correctList.every(v => selectedList.includes(v));
+      const noIncorrect = selectedList.every(v => correctList.includes(v));
+      isCorrect = (allCorrect && noIncorrect);
+    } else {
+      isCorrect = (ans.selectedAnswerIdx === ans.correctAnswerIdx);
+    }
+
     const cardEl = document.createElement("div");
     cardEl.className = `review-card ${isCorrect ? 'correct-card' : 'incorrect-card'}`;
     cardEl.dataset.correct = isCorrect ? "true" : "false";
@@ -890,17 +903,28 @@ function renderReviewCards(mcqAnswers) {
     let optionsHtml = "";
     ans.options.forEach((optText, oIdx) => {
       let optClass = "quiz-option";
-      if (oIdx === ans.correctAnswerIdx) {
+      const isCorrectOption = isMultiple ? ans.correctAnswerIdx.includes(oIdx) : (oIdx === ans.correctAnswerIdx);
+      const isSelectedOption = isMultiple ? (ans.selectedAnswerIdx || []).includes(oIdx) : (oIdx === ans.selectedAnswerIdx);
+
+      if (isCorrectOption) {
         optClass += " correct";
-      } else if (oIdx === ans.selectedAnswerIdx) {
+      } else if (isSelectedOption) {
         optClass += " incorrect";
       }
       
-      if (oIdx === ans.selectedAnswerIdx) {
+      if (isSelectedOption) {
         optClass += " selected";
       }
 
-      optionsHtml += `<button class="${optClass}">${optText}</button>`;
+      let checkboxIndicator = "";
+      if (isMultiple) {
+        let indicatorBg = "none";
+        if (isCorrectOption) indicatorBg = "var(--color-easy)";
+        else if (isSelectedOption) indicatorBg = "var(--color-hard)";
+        checkboxIndicator = `<span class="multi-select-indicator" style="border: 2px solid var(--glass-border); border-radius: 4px; width: 18px; height: 18px; display: inline-block; margin-right: 1rem; background: ${indicatorBg}; flex-shrink: 0;"></span>`;
+      }
+
+      optionsHtml += `<button class="${optClass}" style="${isMultiple ? 'display: flex; align-items: center;' : ''}">${checkboxIndicator}${optText}</button>`;
     });
 
     const statusBadge = isCorrect 
@@ -925,7 +949,20 @@ function renderReviewCards(mcqAnswers) {
 
   // Update filter buttons counts
   const total = mcqAnswers.length;
-  const correctCount = mcqAnswers.filter(a => a.selectedAnswerIdx === a.correctAnswerIdx).length;
+  
+  let correctCount = 0;
+  mcqAnswers.forEach(ans => {
+    const isMultiple = Array.isArray(ans.correctAnswerIdx);
+    if (isMultiple) {
+      const correctList = ans.correctAnswerIdx;
+      const selectedList = ans.selectedAnswerIdx || [];
+      const allCorrect = correctList.every(v => selectedList.includes(v)) && selectedList.every(v => correctList.includes(v));
+      if (allCorrect) correctCount++;
+    } else {
+      if (ans.selectedAnswerIdx === ans.correctAnswerIdx) correctCount++;
+    }
+  });
+
   const incorrectCount = total - correctCount;
 
   document.querySelector(".filter-review-btn[data-filter='all']").textContent = `All Questions (${total})`;
@@ -1057,6 +1094,7 @@ function startExam(examId) {
   state.examSaScore = 0;
   state.examAnswersChecked = false;
   state.examSelectedOptionIndex = null;
+  state.examSelectedOptionIndices = [];
   state.examTimeStart = Date.now();
   state.examMcqAnswers = [];
   state.examCurrentShuffledOptions = [];
@@ -1089,7 +1127,6 @@ function abortActiveExam() {
   document.getElementById("exam-dashboard-panel").style.display = "block";
   renderExamsView();
 }
-
 function renderExamMCQ() {
   const exam = state.activeExam;
   const mcq = exam.mcqs[state.examMcqIndex];
@@ -1097,6 +1134,7 @@ function renderExamMCQ() {
 
   state.examAnswersChecked = false;
   state.examSelectedOptionIndex = null;
+  state.examSelectedOptionIndices = [];
 
   document.getElementById("exam-mcq-section").style.display = "block";
   document.getElementById("exam-sa-section").style.display = "none";
@@ -1106,18 +1144,29 @@ function renderExamMCQ() {
   document.getElementById("exam-progress-fill").style.width = `${progressPercent}%`;
   document.getElementById("exam-progress-text").textContent = `MCQ ${state.examMcqIndex + 1} of 35`;
 
-  document.getElementById("exam-mcq-tag").textContent = `Question ${state.examMcqIndex + 1} of 35 (MCQ - 1 Mark)`;
+  const isMultiple = Array.isArray(mcq.answer);
+  const multipleSuffix = isMultiple ? " (Select all correct answers - multiple answers possible)" : " - 1 Mark";
+  document.getElementById("exam-mcq-tag").textContent = `Question ${state.examMcqIndex + 1} of 35 (MCQ${multipleSuffix})`;
   document.getElementById("exam-mcq-text").textContent = mcq.question;
 
   // Dynamic Option Length Equalization to prevent guessing by option length
   const paddedOptions = adjustOptionLengths(mcq.options);
 
-  // Map and shuffle options
-  state.examCurrentShuffledOptions = paddedOptions.map((option, idx) => ({
-    text: option,
-    originalIdx: idx
-  }));
-  shuffle(state.examCurrentShuffledOptions);
+  // Map and shuffle options, ensuring 'all above' or 'none above' remain at the end
+  const normalOpts = [];
+  const aboveOpts = [];
+
+  paddedOptions.forEach((option, idx) => {
+    const lower = option.toLowerCase();
+    if (lower.includes("all of the above") || lower.includes("all of above") || lower.includes("none of the above") || lower.includes("none of above")) {
+      aboveOpts.push({ text: option, originalIdx: idx });
+    } else {
+      normalOpts.push({ text: option, originalIdx: idx });
+    }
+  });
+
+  shuffle(normalOpts);
+  state.examCurrentShuffledOptions = [...normalOpts, ...aboveOpts];
 
   const optionsContainer = document.getElementById("exam-mcq-options");
   optionsContainer.innerHTML = "";
@@ -1127,19 +1176,50 @@ function renderExamMCQ() {
     optBtn.className = "quiz-option";
     optBtn.textContent = optObj.text;
     
+    // Add a visual checkbox indicator if multiple answers are possible
+    if (isMultiple) {
+      const indicator = document.createElement("span");
+      indicator.className = "multi-select-indicator";
+      indicator.style.border = "2px solid var(--glass-border)";
+      indicator.style.borderRadius = "4px";
+      indicator.style.width = "18px";
+      indicator.style.height = "18px";
+      indicator.style.display = "inline-block";
+      indicator.style.marginRight = "1rem";
+      optBtn.prepend(indicator);
+      optBtn.style.display = "flex";
+      optBtn.style.alignItems = "center";
+    }
+
     optBtn.addEventListener("click", () => {
       if (state.examAnswersChecked) return;
-      state.examSelectedOptionIndex = shuffledIdx;
       
-      document.querySelectorAll("#exam-mcq-options .quiz-option").forEach((btn, bIdx) => {
-        if (bIdx === shuffledIdx) {
-          btn.classList.add("selected");
+      if (isMultiple) {
+        // Toggle selection
+        const pos = state.examSelectedOptionIndices.indexOf(shuffledIdx);
+        if (pos > -1) {
+          state.examSelectedOptionIndices.splice(pos, 1);
+          optBtn.classList.remove("selected");
+          optBtn.querySelector(".multi-select-indicator").style.background = "none";
         } else {
-          btn.classList.remove("selected");
+          state.examSelectedOptionIndices.push(shuffledIdx);
+          optBtn.classList.add("selected");
+          optBtn.querySelector(".multi-select-indicator").style.background = "var(--primary)";
         }
-      });
-      
-      document.getElementById("exam-mcq-submit").disabled = false;
+        document.getElementById("exam-mcq-submit").disabled = (state.examSelectedOptionIndices.length === 0);
+      } else {
+        // Single selection
+        state.examSelectedOptionIndex = shuffledIdx;
+        
+        document.querySelectorAll("#exam-mcq-options .quiz-option").forEach((btn, bIdx) => {
+          if (bIdx === shuffledIdx) {
+            btn.classList.add("selected");
+          } else {
+            btn.classList.remove("selected");
+          }
+        });
+        document.getElementById("exam-mcq-submit").disabled = false;
+      }
     });
     
     optionsContainer.appendChild(optBtn);
@@ -1155,26 +1235,57 @@ function checkExamMCQ() {
   state.examAnswersChecked = true;
   const exam = state.activeExam;
   const mcq = exam.mcqs[state.examMcqIndex];
-  const selectedShuffledIdx = state.examSelectedOptionIndex;
-  
-  // Find which shuffled index corresponds to the correct option index in the original array
-  const correctShuffledIdx = state.examCurrentShuffledOptions.findIndex(opt => opt.originalIdx === mcq.answer);
-  
-  // Find what the original index of the selected option is
-  const originalSelectedIdx = state.examCurrentShuffledOptions[selectedShuffledIdx].originalIdx;
+  const isMultiple = Array.isArray(mcq.answer);
 
   const options = document.querySelectorAll("#exam-mcq-options .quiz-option");
-  options.forEach((btn, idx) => {
-    btn.disabled = true;
-    if (idx === correctShuffledIdx) {
-      btn.classList.add("correct");
-    } else if (idx === selectedShuffledIdx) {
-      btn.classList.add("incorrect");
-    }
-  });
+  let isCorrect = false;
 
-  if (selectedShuffledIdx === correctShuffledIdx) {
-    state.examMcqScore++;
+  if (isMultiple) {
+    const correctOriginalIndices = mcq.answer;
+    const selectedOriginalIndices = state.examSelectedOptionIndices.map(shIdx => state.examCurrentShuffledOptions[shIdx].originalIdx);
+
+    // Strict grading: 0 marks if not all answers are selected correctly
+    const allCorrectSelected = correctOriginalIndices.every(idx => selectedOriginalIndices.includes(idx));
+    const noIncorrectSelected = selectedOriginalIndices.every(idx => correctOriginalIndices.includes(idx));
+    isCorrect = (allCorrectSelected && noIncorrectSelected);
+
+    if (isCorrect) {
+      state.examMcqScore++;
+    }
+
+    options.forEach((btn, shIdx) => {
+      btn.disabled = true;
+      const origIdx = state.examCurrentShuffledOptions[shIdx].originalIdx;
+      const isCorrectOption = correctOriginalIndices.includes(origIdx);
+      const isSelectedOption = selectedOriginalIndices.includes(origIdx);
+
+      if (isCorrectOption) {
+        btn.classList.add("correct");
+        btn.querySelector(".multi-select-indicator").style.background = "var(--color-easy)";
+      } else if (isSelectedOption) {
+        btn.classList.add("incorrect");
+        btn.querySelector(".multi-select-indicator").style.background = "var(--color-hard)";
+      }
+    });
+
+  } else {
+    const selectedShuffledIdx = state.examSelectedOptionIndex;
+    const correctShuffledIdx = state.examCurrentShuffledOptions.findIndex(opt => opt.originalIdx === mcq.answer);
+    const originalSelectedIdx = state.examCurrentShuffledOptions[selectedShuffledIdx].originalIdx;
+
+    isCorrect = (selectedShuffledIdx === correctShuffledIdx);
+    if (isCorrect) {
+      state.examMcqScore++;
+    }
+
+    options.forEach((btn, idx) => {
+      btn.disabled = true;
+      if (idx === correctShuffledIdx) {
+        btn.classList.add("correct");
+      } else if (idx === selectedShuffledIdx) {
+        btn.classList.add("incorrect");
+      }
+    });
   }
 
   // Record details for MCQ Viewback (using the padded options in original order so viewback matches exam)
@@ -1186,7 +1297,9 @@ function checkExamMCQ() {
     question: mcq.question,
     options: paddedOptionsOrdered,
     correctAnswerIdx: mcq.answer,
-    selectedAnswerIdx: originalSelectedIdx,
+    selectedAnswerIdx: isMultiple
+      ? state.examSelectedOptionIndices.map(shIdx => state.examCurrentShuffledOptions[shIdx].originalIdx)
+      : state.examCurrentShuffledOptions[state.examSelectedOptionIndex].originalIdx,
     explanation: mcq.explanation
   });
 
@@ -1197,7 +1310,6 @@ function checkExamMCQ() {
   document.getElementById("exam-mcq-submit").style.display = "none";
   document.getElementById("exam-mcq-next").style.display = "block";
 }
-
 function nextExamMCQ() {
   state.examMcqIndex++;
   if (state.examMcqIndex < 35) {

@@ -2849,5 +2849,1359 @@ window.EXAMS = [
       "sampleAnswer": "1. **Installation Environment**: Type-1 runs directly on the hardware of the host machine (no underlying OS). Type-2 runs as an application on top of an existing host OS (e.g., Windows/macOS).\n2. **Performance**: Type-1 has near-native hardware execution speed because there is no intermediary OS layer. Type-2 suffers from virtualization overhead since guest calls must be translated through the host OS.\n3. **Security**: Type-1 has a very small codebase and attack surface (no host OS vulnerabilities). Type-2 is less secure as a compromise in the host OS can compromise all guest VMs.\n4. **Typical Use Cases**: Type-1 is used in enterprise data centers and public clouds (e.g. AWS Nitro, VMware ESXi). Type-2 is used by developers for local testing, running legacy apps, or testing operating systems on a desktop (e.g., VirtualBox, VMware Workstation)."
     }
   ]
-}
+},
+  {
+    "id": "exam_2026_s1",
+    "title": "Semester 1, 2026 - Practice Exam",
+    "type": "Past Exam",
+    "questionsCount": 35,
+    "mcqs": [
+      {
+        "id": 1,
+        "question": "Which architecture in Flynn's Taxonomy represents standard multi-core CPUs in modern cloud computing nodes?",
+        "options": [
+          "Single Instruction, Single Data (SISD)",
+          "Single Instruction, Multiple Data (SIMD)",
+          "Multiple Instruction, Single Data (MISD)",
+          "Multiple Instruction, Multiple Data (MIMD)"
+        ],
+        "answer": 3,
+        "explanation": "MIMD represents modern multi-core computers where independent cores execute different instructions on separate data asynchronously."
+      },
+      {
+        "id": 2,
+        "question": "Which of the following are not MPI-functions? (multiple choice - multiple answers possible)",
+        "options": [
+          "Init",
+          "Rank",
+          "Scatter",
+          "Collect",
+          "Size"
+        ],
+        "answer": [3],
+        "explanation": "MPI has standard routines like Init, Comm_rank (Rank), Scatter, and Comm_size (Size), but it does not have a function named Collect (it uses Gather, Reduce, or Allgather instead)."
+      },
+      {
+        "id": 3,
+        "question": "What distributed system challenges did Grid Computing try to address? (multiple choice - multiple answers possible)",
+        "options": [
+          "Free access",
+          "Language heterogeneity",
+          "Peer-to-peer",
+          "Organisational collaborations",
+          "All of the above"
+        ],
+        "answer": [3],
+        "explanation": "Grid Computing primarily focused on coordinating resource sharing across distinct administrative domains, enabling secure virtual organisational collaborations."
+      },
+      {
+        "id": 4,
+        "question": "What does a SLURM script support? (multiple choice - multiple answers possible)",
+        "options": [
+          "Start a shell",
+          "Select a partition",
+          "Set a walltime",
+          "Select the resources required",
+          "Install software through sudo"
+        ],
+        "answer": [0, 1, 2, 3],
+        "explanation": "SLURM scripts let users specify shell interpreters, target queue partitions, walltime limits, and required CPU/memory resources, but normal cluster users do not have sudo privileges to install software on worker nodes."
+      },
+      {
+        "id": 5,
+        "question": "What is authentication?",
+        "options": [
+          "Having a password",
+          "Having a fingerprint",
+          "Having face recognition",
+          "Proving your identity",
+          "Secure log in"
+        ],
+        "answer": 3,
+        "explanation": "Authentication is the process of verifying or proving a claimed identity (who you are), which can be done using passwords, biometrics, or security tokens."
+      },
+      {
+        "id": 6,
+        "question": "What are the benefits of bare metal compared to hosted hypervisors? (multiple choice - multiple answers possible)",
+        "options": [
+          "Less hardware dependency",
+          "Better performance",
+          "More secure",
+          "Easier to program",
+          "Desktop support"
+        ],
+        "answer": [1, 2],
+        "explanation": "Type-1 (Bare metal) hypervisors run directly on raw hardware without a host OS, offering superior performance (no double-scheduling overhead) and improved security (smaller codebase and attack surface)."
+      },
+      {
+        "id": 7,
+        "question": "In an OpenStack cloud environment, which of the following statements is true?",
+        "options": [
+          "Projects are organizational units in the cloud known as tenants",
+          "A user can only be a member of one project",
+          "It is best practice to use passwords to access an instance via SSH, as it is a Secure Shell",
+          "It is OK to share a private key via email or OneDrive",
+          "To access a server via SSH, we need to have the private key securely stored on the instance"
+        ],
+        "answer": 0,
+        "explanation": "OpenStack logically groups resources into projects, which were historically referred to as tenants. Users can belong to multiple projects, and private SSH keys must remain secure and secret."
+      },
+      {
+        "id": 8,
+        "question": "Which of the following are valid operations you can perform on OpenStack volumes on MRC? (multiple choice - multiple answers possible)",
+        "options": [
+          "Increase volume size",
+          "Convert volume to image",
+          "Attach a volume to multiple instances simultaneously in read-write mode",
+          "Create a volume from a snapshot",
+          "Decrease volume size"
+        ],
+        "answer": [0, 1, 3, 4],
+        "explanation": "OpenStack Cinder supports resizing (increasing/decreasing) volumes, snapshotting, and exporting volumes as images. Standard volumes cannot be attached to multiple active VMs in read-write mode simultaneously without specialized cluster filesystems."
+      },
+      {
+        "id": 9,
+        "question": "What is the primary purpose of an OpenRC file in OpenStack?",
+        "options": [
+          "To configure network settings",
+          "To store environment variables necessary for accessing the OpenStack APIs",
+          "To manage virtual machines",
+          "To automate the deployment of instances",
+          "All of the above"
+        ],
+        "answer": 1,
+        "explanation": "The OpenRC file contains script commands that initialize environment variables (like OS_AUTH_URL, OS_USERNAME) so that CLI utilities and APIs can authenticate against Keystone."
+      },
+      {
+        "id": 10,
+        "question": "Can ElasticSearch do many-to-many joins of documents (choose the best answer)?",
+        "options": [
+          "No: ElasticSearch is not a relational DBMS",
+          "Yes, it can do joins via lookup indexes just as a relational DBMS",
+          "Yes, it can do joins via lookup indexes, but there are limitations (for instance in the size of the lookup index)",
+          "Yes, but only with the ElasticSearch SQL language",
+          "Yes, but only with the ElasticSearch ES|QL language"
+        ],
+        "answer": 0,
+        "explanation": "Elasticsearch is a document store and is not designed for relational many-to-many joins. Although it supports nested documents and parent-child relations, it lacks traditional SQL-style M:N join performance and mechanics."
+      },
+      {
+        "id": 11,
+        "question": "How can you connect an HTTP request to a Fission function?",
+        "options": [
+          "A timer trigger has to be created that connects an HTTP port to a Fission function",
+          "A Kubernetes ingress has to be created specifying the HTTP method, port, and URL",
+          "A route has to be created: a route connects a URL and an HTTP method to a Fission function",
+          "A Nginx pod has to be created and a Fission function connected to a URL managed by a Nginx pod",
+          "Use port forwarding"
+        ],
+        "answer": 2,
+        "explanation": "Fission maps incoming HTTP requests to specific serverless functions using HTTP Triggers (Routes), which map a URL path and HTTP verb/method directly to a target function."
+      },
+      {
+        "id": 12,
+        "question": "Compare Amdahl's Law and Gustafson-Barsis's Law on performance bounds.",
+        "options": [
+          "Amdahl assumes fixed problem size; Gustafson-Barsis assumes problem size grows with resources.",
+          "Amdahl assumes infinite bandwidth; Gustafson-Barsis assumes high latency.",
+          "Amdahl measures physical cores; Gustafson-Barsis measures hyperthreaded queues.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Amdahl's law assumes fixed workloads where serial parts dominate at scale. Gustafson-Barsis argues that users increase problem complexity as execution resources grow, allowing linear speedups."
+      },
+      {
+        "id": 13,
+        "question": "What does 'loop overhead' replicate on each processor node during loop partitioning?",
+        "options": [
+          "The index counter tests and boundary completion calculations.",
+          "The database transaction lock flags.",
+          "The hypervisor guest page tables.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "Partitioning a loop duplicates tests for loop bounds and increments on each CPU core, acting as a serial execution overhead."
+      },
+      {
+        "id": 14,
+        "question": "In a multi-core CPU architecture, what are the three primary cache challenges?",
+        "options": [
+          "Cache coherence, performance bottlenecks under concurrent load, and cache stalls.",
+          "Bandwidth throttling, encryption keys, and disk space limits.",
+          "Glance image retrieval, sbatch queue schedules, and port security.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Cores must coordinate cache lines to prevent dirty reads (coherence), manage read/write bandwidth, and handle stalls while waiting for main memory."
+      },
+      {
+        "id": 15,
+        "question": "Under the CAP theorem, which of the following database setups are AP (Availability & Partition Tolerance) systems? (multiple choice - multiple answers possible)",
+        "options": [
+          "CouchDB leaderless multi-master setup",
+          "Apache Cassandra cluster model",
+          "Federated PostgreSQL with 2-Phase Commit",
+          "Single-node MySQL database"
+        ],
+        "answer": [0, 1],
+        "explanation": "CouchDB and Cassandra prioritize availability and partition tolerance, using optimistic replication and resolving conflicts asynchronously, whereas federated DBs with 2PC sacrifice partition tolerance."
+      },
+      {
+        "id": 16,
+        "question": "Why should persistent database volumes be decoupled from OpenStack Nova virtual machines?",
+        "options": [
+          "Because virtual machines are ephemeral and deleting a VM destroys all local instance disks, losing database records.",
+          "Because Nova does not support SQL queries.",
+          "Because local disks are restricted to Type-2 hypervisors.",
+          "Because Cinder volumes automatically encrypt records."
+        ],
+        "answer": 0,
+        "explanation": "VM instances are temporary. Decoupling storage (using Cinder block volumes) ensures data persists independently when instances are terminated or rescheduled."
+      },
+      {
+        "id": 17,
+        "question": "What is the role of 'nova-scheduler' in OpenStack?",
+        "options": [
+          "Selecting the best physical hypervisor host to launch a VM based on hardware filters and resources.",
+          "Exposing REST API endpoints to public clients.",
+          "Encrypting volumes during block volume mounts.",
+          "Handling all virtual networking route definitions."
+        ],
+        "answer": 0,
+        "explanation": "The nova-scheduler selects an appropriate physical hypervisor node for new instances based on resource filters (ram, cpu, disk) and availability."
+      },
+      {
+        "id": 18,
+        "question": "What is the difference between a Docker Image and a Docker Container? (multiple choice - multiple answers possible)",
+        "options": [
+          "An Image is a read-only immutable blueprint of the filesystem; a Container is a live runnable instance with active write layers.",
+          "An Image has no active runtime process; a Container runs active processes on the host OS kernel.",
+          "Images isolate hardware interfaces; Containers isolate guest hypervisors.",
+          "All of the above."
+        ],
+        "answer": [0, 1],
+        "explanation": "Images represent read-only filesystem templates. Containers run processes inside isolated namespaces/cgroups with an active read-write layer."
+      },
+      {
+        "id": 19,
+        "question": "In Docker bridge network mode, how is a container application exposed on a laptop port?",
+        "options": [
+          "By configuring port forwarding in the Docker daemon, mapping a host port to the container port.",
+          "By mounting a Cinder volume to the container.",
+          "By running the container inside a Type-1 hypervisor.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Bridge mode isolates container IPs. Host ports must be mapped (forwarded) to the internal container ports to make services accessible externally."
+      },
+      {
+        "id": 20,
+        "question": "What is the primary benefit of Continuous Integration (CI)?",
+        "options": [
+          "Early detection of software bugs by automating builds and unit tests on every commit.",
+          "Automatic deployment of code directly to public production databases.",
+          "Syncing local files via NFS mounts.",
+          "Exposing local ports securely over public internet."
+        ],
+        "answer": 0,
+        "explanation": "CI checks code updates frequently, verifying that changes compile and pass tests to locate regression bugs quickly."
+      },
+      {
+        "id": 21,
+        "question": "In CI/CD code scanning (e.g. SonarQube), what does a 'Security Hotspot' indicate?",
+        "options": [
+          "Suspicious code patterns that require manual inspection to confirm if they represent a real vulnerability.",
+          "A confirmed, exploitable SQL injection vulnerability in production.",
+          "A CPU node executing heavy loop iterations.",
+          "An unauthorized access attempt to an OpenStack instance."
+        ],
+        "answer": 0,
+        "explanation": "Security hotspots highlight areas that are not guaranteed bugs but use sensitive APIs (like crypto, permissions) needing developer review."
+      },
+      {
+        "id": 22,
+        "question": "In Kubernetes, what resources do containers inside the same Pod share?",
+        "options": [
+          "Network stack (same IP and port space), IPC namespace, and storage volumes.",
+          "Guest OS kernel filesystems and virtual hardware controllers.",
+          "Type-1 hypervisor scheduler filters.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "Containers inside a Pod are tightly coupled, sharing the network stack, IPC interfaces, and storage volumes, but having distinct process namespaces."
+      },
+      {
+        "id": 23,
+        "question": "What is the purpose of a Kubernetes Service?",
+        "options": [
+          "Providing a stable IP address and port that load-balances requests across a dynamic group of underlying pods.",
+          "Mounting cloud block drives directly to local developer laptops.",
+          "Scheduling sbatch jobs on Sapphire SLURM queues.",
+          "Encrypting Keystone tokens dynamically."
+        ],
+        "answer": 0,
+        "explanation": "Pods are temporary and change IPs frequently. A Service acts as a stable DNS name, IP, and load-balancer over a moving target of pod backends."
+      },
+      {
+        "id": 24,
+        "question": "What is the advantage of separating PV and PVC in Kubernetes?",
+        "options": [
+          "It makes applications portable by decoupling resource definitions (PV) from workload requests (PVC).",
+          "It accelerates container boot times to under one second.",
+          "It prevents replication locks on relational databases.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "This separation allows developers to request storage abstractly without knowing whether it is local disk, NFS, or AWS EBS, which is resolved by the cluster admin."
+      },
+      {
+        "id": 25,
+        "question": "Which of the following REST API practices are recommended under standard RESTful design? (multiple choice - multiple answers possible)",
+        "options": [
+          "URLs should focus on resources (nouns) rather than execution actions (verbs).",
+          "Standard HTTP methods (GET, POST, PUT, DELETE) should declare operations.",
+          "GET requests must be safe and idempotent, modifying no database state.",
+          "Resource endpoints must require basic SSH credentials on every path."
+        ],
+        "answer": [0, 1, 2],
+        "explanation": "REST design represents entities as nouns in URLs and operates on them using standard HTTP methods. GET calls must remain read-only without modifying state."
+      },
+      {
+        "id": 26,
+        "question": "In Fission, how does the PoolManager reduce function cold-starts?",
+        "options": [
+          "By keeping a pool of warm, generic environment containers that load code instantly upon invocation.",
+          "By deploying dedicated Kubernetes Services for every function route.",
+          "By running all workloads on Type-1 bare metal hosts.",
+          "By queuing jobs using a SLURM controller partition."
+        ],
+        "answer": 0,
+        "explanation": "PoolManager maintains warm pods with pre-loaded runtimes. Upon execution, the function package is injected, bypassing container creation latency."
+      },
+      {
+        "id": 27,
+        "question": "What are the Big Data characteristics: 'Velocity' and 'Veracity'?",
+        "options": [
+          "Velocity is the speed at which new data is generated; Veracity is the accuracy and provenance of the data.",
+          "Velocity is the overall size of the data; Veracity is the variety of file formats.",
+          "Velocity is the query response time; Veracity is the database security encryption level.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Velocity refers to continuous high-speed data flow. Veracity measures the trustworthiness, noise ratio, and authenticity of the source data."
+      },
+      {
+        "id": 28,
+        "question": "Under the CAP theorem, how does CouchDB handle write conflicts during a network partition? (multiple choice - multiple answers possible)",
+        "options": [
+          "It allows nodes to write locally, creating multiple document revisions asynchronously.",
+          "It delegates conflict resolution to the application/developer layer.",
+          "It blocks all concurrent writes until a central quorum is reached.",
+          "It triggers a database two-phase commit lock abort."
+        ],
+        "answer": [0, 1],
+        "explanation": "CouchDB is an AP database using Multi-Version Concurrency Control. It permits local writes during partitions, storing conflicts as separate revisions to be resolved later."
+      },
+      {
+        "id": 29,
+        "question": "Why do large Elasticsearch indexes require cursor-based pagination?",
+        "options": [
+          "Because offset-based pagination requires the database to scan and count through all preceding records, degrading search speed at high offsets.",
+          "Because offset pagination causes replication blocks across primary shards.",
+          "Because cursors are permanently held in master node memory.",
+          "Because cursors automatically encrypt records."
+        ],
+        "answer": 0,
+        "explanation": "Offset pagination forces the engine to read and sort all records from the start. Cursors use stable pointers to fetch only the next page instantly."
+      },
+      {
+        "id": 30,
+        "question": "What is a major performance issue of storing Base64-encoded image files directly in Elasticsearch?",
+        "options": [
+          "It bloats document size by ~33%, causing extreme memory pressure, slow replication, and poor index query speeds.",
+          "It breaks CAP consistency protocols.",
+          "It converts document index formats to read-only.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "ES is not a blob store. Encoding images to base64 text strings bloats index size, causing memory issues. It is best practice to store image files on object stores and reference URLs."
+      },
+      {
+        "id": 31,
+        "question": "What is the primary difference in isolation layer between Type-1 and Type-2 hypervisors?",
+        "options": [
+          "Type-1 hypervisors execute directly on raw physical hardware; Type-2 hypervisors run inside a host operating system.",
+          "Type-1 hypervisors manage virtual ports; Type-2 hypervisors manage local SSH tunnels.",
+          "Type-1 hypervisors require modifying guest kernels; Type-2 hypervisors do not.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Type-1 bare-metal hypervisors sit between hardware and virtual kernels. Type-2 hypervisors run on top of a desktop OS (like Windows or macOS), introducing double-scheduling overhead."
+      },
+      {
+        "id": 32,
+        "question": "According to Popek-Goldberg Virtualization Theorem, under what condition is a hardware CPU architecture virtualizable?",
+        "options": [
+          "If all sensitive instructions are a strict subset of privileged instructions.",
+          "If the processor clock speed exceeds 3.0 GHz.",
+          "If the architecture supports container bridge networks natively.",
+          "If the L1 and L2 cache lines are automatically coherent."
+        ],
+        "answer": 0,
+        "explanation": "All sensitive instructions (those that read/write hardware controls or depend on mode) must trigger a hardware trap when run in user space (be privileged) for hypervisors to intercept them."
+      },
+      {
+        "id": 33,
+        "question": "In AWS VPC, what is the role of a NAT Gateway?",
+        "options": [
+          "To allow instances in a private subnet to connect to the internet while preventing external hosts from initiating connections.",
+          "To assign public Elastic IPs to private database servers.",
+          "To load-balance HTTP requests across ECS target groups.",
+          "To secure Keystone REST API paths."
+        ],
+        "answer": 0,
+        "explanation": "NAT Gateways route outgoing traffic from private networks to the internet, translating private IPs to a public IP, but block unsolicited incoming traffic."
+      },
+      {
+        "id": 34,
+        "question": "What is the role of a Certification Authority (CA) in a Public Key Infrastructure (PKI)?",
+        "options": [
+          "To digitally sign public keys, validating that the key belongs to the declared owner based on organizational trust.",
+          "To decrypt private keys sent over public subnets.",
+          "To filter firewall port accesses.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "A CA acts as a trusted third party, signing certificate structures to bind a public key to a specific identity."
+      },
+      {
+        "id": 35,
+        "question": "What are the security components of a SAML federated single sign-on system (like Shibboleth/AAF)? (multiple choice - multiple answers possible)",
+        "options": [
+          "Identity Provider (IdP) that authenticates users and issues assertions.",
+          "Service Provider (SP) that hosts resources and consumes assertions to authorize users.",
+          "Keystone endpoint proxy that registers Cinder storage volumes.",
+          "Fission trigger route that connects HTTP ports to functions."
+        ],
+        "answer": [0, 1],
+        "explanation": "Federated SSO relies on Identity Providers (IdP) issuing XML assertions of authentication, and Service Providers (SP) consuming and verifying those assertions to grant resource access."
+      }
+    ],
+    "shortAnswers": [
+      {
+        "id": 1,
+        "question": "In assignment 2, you created a Cloud-based solution for ingesting, processing, and analysing diverse data. At the back end of your solution, you established an ElasticSearch database, and a RESTful API based on Fission that could be accessed through a Jupyter Notebook. You now wish to protect access to the RESTful API so that only members of your team and Professor Sinnott can access it.\n\nQuestions:\na) What security concept is required to achieve this? [1]\nb) You now wish to allow Professor Sinnott to have direct read-only access to your database. What security concept is required to achieve this? [1]\nc) You have technical problems and need Professor Sinnott to have access to your Cloud-based servers. How might you achieve this? [1]",
+        "maxMarks": 3,
+        "sampleAnswer": "a) Authentication: This verifies the identity of the user accessing the RESTful API (verifying who they are).\nb) Authorisation: This manages the access privileges of the authenticated user, restricting Professor Sinnott's permissions to read-only operations on the Elasticsearch database.\nc) Add Professor Sinnott's public SSH key to the server's authorized_keys file (usually under ~/.ssh/authorized_keys) on the cloud instance, allowing secure SSH access."
+      },
+      {
+        "id": 2,
+        "question": "COMP90024 Team-100 developed an amazing solution and decided to build an interactive web-based front end user interface highlighting diverse scenarios using their RESTful API. The University of Melbourne wishes to showcase this solution to highlight the cutting end teaching that happens at the University. The University decides to create a new eduPerson attribute (eduCOMP90024) to be included in the University of Melbourne Identity Provider to allow all current and future students taking COMP90024 to explore the Team-100 solution.\n\nDiscuss the technical and non-technical challenges associated with the roll-out of this new attribute. [7]",
+        "maxMarks": 7,
+        "sampleAnswer": "Technical Challenges:\n1. Attribute Release Policy: Configuring the central Identity Provider (IdP) to release the new attribute specifically to the Service Provider (SP) hosting the application, without exposing it to unrelated SPs in the federation.\n2. Metadata and Federation Sync: Distributing metadata updates containing the new schema definitions across the federation so the SP web server can correctly parse the SAML assertion.\n3. Application Integration: Modifying the web backend to check the SAML assertion values and map the eduCOMP90024 attribute to corresponding local application permissions.\n\nNon-Technical Challenges:\n1. Administrative Approvals: Securing university administrative approval to alter the core LDAP/Active Directory database schema to support a course-specific custom attribute.\n2. Data Privacy & Compliance: Ensuring that sharing student enrollment statuses complies with local privacy laws and student data protection standards.\n3. Lifecycle Management: Coordinating the maintenance and eventual deprecation of the attribute when students finish the course or the application is decommissioned."
+      },
+      {
+        "id": 3,
+        "question": "Why would the Cloud-based solution developed by Team-100 not be a suitable use case for eduPerson attributes that are used by Shibboleth to support single sign-on through the Australian Access Federation? [3]\n\nAnd, a member of Team-100 signs in to their web-based system through the AAF using a PC in the Baillieu Library and forgets to log out. A jealous member of COMP90024 team-99, now accesses the PC and sees the existing web-based browser session. Discuss a worst-case scenario for Team-100 and their Cloud solution. [2]",
+        "maxMarks": 5,
+        "sampleAnswer": "Suitability of eduPerson Attributes (3 Marks):\nUsing central IdP attributes for temporary, class-level groups introduces huge administrative overhead. Shibboleth and AAF are intended for enterprise-wide resources. Creating local attributes on a central registry for single-semester groups creates directory clutter. A better solution is using Virtual Organizations (VOs) or group management services (like Grouper) to manage temporary collaborative access rights outside the core LDAP directory.\n\nWorst-Case Scenario (2 Marks):\n1. Resource Abuse and Costs: The attacker could use the open session to execute administrative API routes, deleting database indexes or spinning up expensive cloud compute resources (like GPU nodes), causing massive cloud billing charges.\n2. Academic Sabotage and Data Theft: The attacker could steal private code configurations, leak sensitive keys, delete final assignment databases, or alter submissions, resulting in loss of grades and academic integrity compromise."
+      }
+    ]
+  },
+  {
+    "id": "exam_ai_3",
+    "title": "Accurate AI Exam 3 - Practice Paper",
+    "type": "AI Generated",
+    "questionsCount": 35,
+    "mcqs": [
+      {
+        "id": 1,
+        "question": "Under NIST guidelines, which cloud characteristic matches billing customer resources measured at the appropriate level of abstraction?",
+        "options": [
+          "Resource pooling",
+          "Rapid elasticity",
+          "Measured service",
+          "On-demand self-service"
+        ],
+        "answer": 2,
+        "explanation": "Measured service automatically monitors, controls, and reports resource utilization, charging customers only for what they consume."
+      },
+      {
+        "id": 2,
+        "question": "Which of the following are valid container isolation mechanisms in Linux? (multiple choice - multiple answers possible)",
+        "options": [
+          "Namespaces (network, mount, PID, etc.)",
+          "Control Groups (cgroups)",
+          "Type-1 hypervisor hardware scheduling",
+          "Cinder block volume storage attachments"
+        ],
+        "answer": [0, 1],
+        "explanation": "Linux containers use namespaces to isolate processes (network, storage, PIDs) and control groups (cgroups) to restrict resource usage (CPU, RAM)."
+      },
+      {
+        "id": 3,
+        "question": "Compare horizontal and vertical scaling properties.",
+        "options": [
+          "Horizontal adds nodes; vertical adds resources to a single node.",
+          "Horizontal uses 2-Phase Commit; vertical uses CouchDB MVCC.",
+          "Horizontal is limited to Type-2 hypervisors; vertical is for Type-1.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Horizontal scaling adds more servers to a cluster, distributing workload. Vertical scaling increases capabilities (RAM/CPU) of a single node."
+      },
+      {
+        "id": 4,
+        "question": "Which of the following are true about Amdahl's Law? (multiple choice - multiple answers possible)",
+        "options": [
+          "Theoretical speedup is limited by the sequential portion of the code.",
+          "It assumes a fixed problem size.",
+          "Adding more processors always yields linear speedup.",
+          "It represents GPU multithreaded pipelines."
+        ],
+        "answer": [0, 1],
+        "explanation": "Amdahl's law demonstrates that sequential segments create speedup ceilings at scale, assuming a fixed problem size."
+      },
+      {
+        "id": 5,
+        "question": "In CAP theorem, what does Consistency represent?",
+        "options": [
+          "All nodes see the same data at the same time.",
+          "All database queries respond without error.",
+          "The database schema is locked to SQL.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "Consistency means every read receives the most recent write or an error across all active database nodes."
+      },
+      {
+        "id": 6,
+        "question": "Which database setups are CP (Consistency & Partition Tolerance) systems? (multiple choice - multiple answers possible)",
+        "options": [
+          "Elasticsearch clusters (requires Master/Quorum consensus)",
+          "Relational databases using strict consensus models",
+          "CouchDB leaderless multi-master replication",
+          "Apache Cassandra loose consistency clusters"
+        ],
+        "answer": [0, 1],
+        "explanation": "Consensus-based systems and strict relational clusters prioritize consistency during network partitions, blocking isolated nodes from accepting writes."
+      },
+      {
+        "id": 7,
+        "question": "What is the primary role of Keystone in OpenStack?",
+        "options": [
+          "Authentication and identity service.",
+          "Virtual machine instance compute controller.",
+          "Persistent block storage manager.",
+          "Web dashboard interface."
+        ],
+        "answer": 0,
+        "explanation": "Keystone manages credentials, issues authentication tokens, and maintains the directory of service endpoints in OpenStack."
+      },
+      {
+        "id": 8,
+        "question": "What operations are managed by OpenStack Neutron? (multiple choice - multiple answers possible)",
+        "options": [
+          "Virtual network port creation",
+          "Security group firewall rules",
+          "Floating IP assignments",
+          "Glance image template creation"
+        ],
+        "answer": [0, 1, 2],
+        "explanation": "Neutron handles virtual networking resources (ports, subnets, routers, security groups, floating IPs) in OpenStack."
+      },
+      {
+        "id": 9,
+        "question": "What does a Docker image layer represent?",
+        "options": [
+          "A read-only, immutable slice of the filesystem created by instructions in a Dockerfile.",
+          "A virtual RAM block in a Type-2 hypervisor.",
+          "An index mapping table inside Elasticsearch.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Docker images are built from stacked, read-only layers. Each build instruction (like RUN, COPY) generates a new immutable layer."
+      },
+      {
+        "id": 10,
+        "question": "In Docker, what happens to data written inside a container's default read-write layer when it is deleted?",
+        "options": [
+          "The data is permanently lost.",
+          "The data is automatically saved to a host directory.",
+          "The data is replicated to other containers.",
+          "The data is moved to a Cinder volume."
+        ],
+        "answer": 0,
+        "explanation": "A container's read-write layer is ephemeral. Deleting the container destroys this layer; persistence requires Docker volumes or bind mounts."
+      },
+      {
+        "id": 11,
+        "question": "What is the primary goal of Continuous Integration (CI)?",
+        "options": [
+          "Automating tests to merge updates safely and catch bugs early.",
+          "Running sbatch scripts on Spartan clusters.",
+          "Configuring virtual organization trust structures.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "CI automates compiles and tests for code updates, allowing developers to verify changes daily and avoid code regression."
+      },
+      {
+        "id": 12,
+        "question": "In CI/CD scans, what is a code Vulnerability?",
+        "options": [
+          "An identified security weakness that can be exploited by attackers to compromise a system.",
+          "A syntax error preventing compilation.",
+          "A high-latency loop partition queue.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Vulnerabilities are confirmed security flaws (like hardcoded keys, SQL injections, insecure packages) that pose immediate security risks."
+      },
+      {
+        "id": 13,
+        "question": "What is a Kubernetes Pod?",
+        "options": [
+          "The smallest deployable unit representing one or more containers sharing network and storage resources.",
+          "A physical node inside a cluster.",
+          "A static volume claim endpoint.",
+          "A REST API resource model."
+        ],
+        "answer": 0,
+        "explanation": "Pods schedule tightly coupled container workloads that execute on the same host and share the network stack (IP/ports)."
+      },
+      {
+        "id": 14,
+        "question": "What is a Kubernetes Ingress?",
+        "options": [
+          "An API object that manages external access to internal Services, typically routing HTTP traffic.",
+          "An internal load-balancer IP for pods.",
+          "A persistent drive claim template.",
+          "A Keystone token generator."
+        ],
+        "answer": 0,
+        "explanation": "Ingress objects manage routing rules for incoming HTTP/S connections, forwarding traffic to corresponding Services."
+      },
+      {
+        "id": 15,
+        "question": "What are the characteristics of RESTful APIs? (multiple choice - multiple answers possible)",
+        "options": [
+          "Resource-centric URLs (nouns).",
+          "Stateless communication (no session stored on server).",
+          "Execution verbs in URL paths.",
+          "SSH key authorizations on every endpoint."
+        ],
+        "answer": [0, 1],
+        "explanation": "REST design utilizes resource-centric paths, standard HTTP verbs, and ensures calls are stateless to support horizontal scalability."
+      },
+      {
+        "id": 16,
+        "question": "What is Fission?",
+        "options": [
+          "A FaaS (Function as a Service) serverless framework running on top of Kubernetes.",
+          "A database clustering engine using two-phase commit.",
+          "An OpenStack command-line interface helper.",
+          "A batch scheduler for SLURM jobs."
+        ],
+        "answer": 0,
+        "explanation": "Fission is a serverless FaaS framework built on Kubernetes, enabling rapid execution of short-lived, state-free functions."
+      },
+      {
+        "id": 17,
+        "question": "What is a Big Data 'Volume'?",
+        "options": [
+          "The overall scale and storage size of the collected dataset.",
+          "The speed of new record generation.",
+          "The diversity of file formats.",
+          "The reliability of dataset sources."
+        ],
+        "answer": 0,
+        "explanation": "Volume refers to massive data scale, ranging from terabytes to exabytes, which typical local filesystems cannot process."
+      },
+      {
+        "id": 18,
+        "question": "Which of the following database options are AP (Availability & Partition Tolerance) systems? (multiple choice - multiple answers possible)",
+        "options": [
+          "CouchDB multi-master replication setups",
+          "Apache Cassandra column databases",
+          "Single-node PostgreSQL databases",
+          "Elasticsearch index shards"
+        ],
+        "answer": [0, 1],
+        "explanation": "Cassandra and CouchDB prioritize writes during partitions, allowing eventual consistency reconciliations after recovery."
+      },
+      {
+        "id": 19,
+        "question": "How does Elasticsearch optimize search queries over large text volumes?",
+        "options": [
+          "By building inverted indexes matching terms to documents.",
+          "By executing relational table joins.",
+          "By running Type-1 hardware virtualizations.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "Elasticsearch uses inverted indexes to parse text, mapping words to documents to perform near-instant keyword searching."
+      },
+      {
+        "id": 20,
+        "question": "Why is cursor pagination preferred over offset pagination for search engines?",
+        "options": [
+          "It avoids scanning and sorting all preceding records, providing constant-time page fetches.",
+          "It enables secure password hashing.",
+          "It prevents primary shard partitions.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Offset pagination forces engines to read all records up to the target offset. Cursors point directly to the page boundaries, saving CPU resources."
+      },
+      {
+        "id": 21,
+        "question": "What is the Popek-Goldberg hypervisor Fidelity property?",
+        "options": [
+          "Virtual software runs identically to raw hardware execution (except for timing details).",
+          "The VM boots in under three seconds.",
+          "Hypervisors encrypt guest memory lines.",
+          "The VMM automatically runs on SLURM."
+        ],
+        "answer": 0,
+        "explanation": "Fidelity dictates that virtualized code experiences identical logical state transitions as on bare metal, maintaining software correctness."
+      },
+      {
+        "id": 22,
+        "question": "According to Popek-Goldberg virtualization rules, what is a sensitive instruction?",
+        "options": [
+          "An instruction whose behavior depends on active privilege modes or coordinates hardware directly.",
+          "An instruction causing CPU clock speed throttling.",
+          "An instruction modifying a Docker environment variable.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "Sensitive instructions interface directly with system controls (e.g. MMU, page tables, hardware states) or behave differently in user space."
+      },
+      {
+        "id": 23,
+        "question": "What is an AWS private subnet?",
+        "options": [
+          "A subnet without direct routing paths to an internet gateway.",
+          "A subnet hosted on a Type-2 desktop hypervisor.",
+          "A subnet restricted to container images.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Private subnets lack direct route entries for Internet Gateways, securing internal databases and applications from direct public access."
+      },
+      {
+        "id": 24,
+        "question": "What is a Public Key Infrastructure (PKI) Certification Authority?",
+        "options": [
+          "A trusted issuer that signs public keys to verify owner identity.",
+          "A hardware security module decrypting private keys.",
+          "A network controller managing routing tables.",
+          "A database proxy for Keystone instances."
+        ],
+        "answer": 0,
+        "explanation": "CAs verify entities, signing their certificate packages to assure users that public keys indeed map to the declared owners."
+      },
+      {
+        "id": 25,
+        "question": "What are the common challenges of cross-provider single sign-on (SSO)? (multiple choice - multiple answers possible)",
+        "options": [
+          "Federating trust relationships across distinct security domains.",
+          "Aligning user attributes and metadata schemas.",
+          "Synchronizing local Cinder storage mounts.",
+          "None of the above."
+        ],
+        "answer": [0, 1],
+        "explanation": "SSO across organizations is difficult due to varying trust scopes and differences in identity schemas (attributes, logins) needing federation."
+      },
+      {
+        "id": 26,
+        "question": "Compare Supercomputers and Cluster networks.",
+        "options": [
+          "Supercomputers are single-address-space systems; Clusters connect separate hosts via high-speed LANs.",
+          "Supercomputers use Docker volumes; Clusters use Type-2 hypervisors.",
+          "Supercomputers run on Fission; Clusters run on AWS ECS.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "Supercomputers act as singular, highly optimized systems. Clusters group separate server hardware using middleware networks (e.g. MPI) to coordinate compute."
+      },
+      {
+        "id": 27,
+        "question": "What is the SLURM command 'sbatch' utilized for?",
+        "options": [
+          "Submitting batch job scripts to the scheduling queue.",
+          "Stopping containerized docker instances.",
+          "Creating new OpenStack virtual subnets.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "sbatch sends resource-defined job scripts to the SLURM queue scheduler for asynchronous runtimes on compute worker nodes."
+      },
+      {
+        "id": 28,
+        "question": "Which of the following represent horizontal scaling operations? (multiple choice - multiple answers possible)",
+        "options": [
+          "Adding three compute nodes to a Kubernetes cluster",
+          "Scaling out a stateless web server deployment using autoscalers",
+          "Upgrading instance CPU cores from 4 to 16 vCPUs",
+          "Mounting a larger block volume drive"
+        ],
+        "answer": [0, 1],
+        "explanation": "Horizontal scaling involves adding more node instances to a cluster pool rather than upgrading hardware capacity of single servers."
+      },
+      {
+        "id": 29,
+        "question": "What does 'nova-conductor' do in OpenStack?",
+        "options": [
+          "Acts as a secure database proxy for worker compute daemons to protect credentials.",
+          "Schedules VM host placement on hypervisors.",
+          "Manages Glance virtual image templates.",
+          "Tracks floating IP route configurations."
+        ],
+        "answer": 0,
+        "explanation": "nova-conductor sits between compute nodes and the database, preventing compute hosts from accessing DB credentials directly for security hardening."
+      },
+      {
+        "id": 30,
+        "question": "In Docker, what is bridge network mode?",
+        "options": [
+          "An isolated virtual network bridge where containers obtain internal IP addresses.",
+          "A network path running directly on Type-1 hypervisors.",
+          "A file mount pipeline between Cinder and Glance.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Bridge mode establishes isolated subnets inside the host, utilizing network address translations (NAT) to forward external ports to containers."
+      },
+      {
+        "id": 31,
+        "question": "What is a Kubernetes Persistent Volume Claim (PVC)?",
+        "options": [
+          "A user/application request for storage resources specifying requirements.",
+          "The actual physical storage block provisioned by administrators.",
+          "A route trigger linking function endpoints to URLs.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "PVCs declare storage requests (e.g. size, read-write access modes) that Kubernetes matches and binds to appropriate PV backends."
+      },
+      {
+        "id": 32,
+        "question": "In REST, when is the PUT method preferred over POST?",
+        "options": [
+          "When updating or creating a resource at a client-defined specific URL destination.",
+          "When server creates resources at randomly generated paths.",
+          "When the call modifies state without idempotency.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "PUT is idempotent and is used when the client specifies the exact resource path URL, overwriting or creating it there."
+      },
+      {
+        "id": 33,
+        "question": "In Fission, what is the role of PoolManager compared to NewDeploy?",
+        "options": [
+          "PoolManager loads packages into warm pre-started containers instantly; NewDeploy spawns dedicated pods dynamically.",
+          "PoolManager is for Type-2 desktop runs; NewDeploy is for bare-metal systems.",
+          "PoolManager requires SLURM scripts; NewDeploy runs on OpenStack Nova.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "PoolManager minimizes cold starts using warm pools but scales poorly. NewDeploy autoscales dedicated pods but incurs cold-start latency."
+      },
+      {
+        "id": 34,
+        "question": "What are the Big Data characteristics: 'Volume' and 'Variety'?",
+        "options": [
+          "Volume is data size scale; Variety is diversity of data formats and models.",
+          "Volume is dataset generation velocity; Variety is database security levels.",
+          "Volume is query throughput; Variety is consensus cluster quorums.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Volume tracks scale (terabytes/petabytes). Variety tracks format complexity (structured SQL databases, unstructured log text, image binaries)."
+      },
+      {
+        "id": 35,
+        "question": "What CAP properties describe a Federated PostgreSQL setup using FDWs?",
+        "options": [
+          "Consistency and Availability (CA), refusing operations during partitions.",
+          "Availability and Partition Tolerance (AP), writing to any partition.",
+          "Consistency and Partition Tolerance (CP), allowing local reads.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "Federated FDWs require 2-phase commits across all nodes. In partitions, the master aborts updates, preserving consistency (C) and availability (A) locally but failing partition tolerance (P)."
+      }
+    ],
+    "shortAnswers": [
+      {
+        "id": 1,
+        "question": "Compare Fission's PoolManager and NewDeploy execution strategies in terms of cold-start latency, resource consumption, and scaling under high concurrency. [5]",
+        "maxMarks": 5,
+        "sampleAnswer": "1. **Cold-start Latency**: PoolManager has very low latency because it keeps generic warm pods pre-loaded. Code is injected instantly. NewDeploy has higher latency because it creates dedicated pods, containers, and services dynamically.\n2. **Resource Consumption**: PoolManager keeps warm environment instances running constantly, consuming memory even when idle. NewDeploy can scale down to zero, releasing compute resources when idle.\n3. **High Concurrency Scaling**: PoolManager does not autoscale function pods well under high concurrency (it queues requests or Specializes a single pod). NewDeploy uses Kubernetes Horizontal Pod Autoscaling (HPA) to scale pods dynamically, handling high concurrency."
+      },
+      {
+        "id": 2,
+        "question": "Describe the CAP theorem tradeoffs in CouchDB databases. Explain how CouchDB resolves write conflicts after a network partition is healed. [5]",
+        "maxMarks": 5,
+        "sampleAnswer": "1. **CAP Tradeoff**: CouchDB is an AP database. During a network partition, all nodes continue accepting writes to maintain high Availability, sacrificing Consistency.\n2. **MVCC model**: CouchDB uses Multi-Version Concurrency Control. Every write creates a new revision of the document.\n3. **Conflict Storage**: When partitioned, different nodes receive updates, creating divergent revision histories. CouchDB stores all conflicting revisions on document replication.\n4. **Conflict Resolution**: CouchDB selects a deterministic 'winning revision' automatically so all nodes output consistent data, but retains conflicts. The application developer must merge or delete the conflicting revisions manually using document API loops."
+      },
+      {
+        "id": 3,
+        "question": "Explain how Linux namespaces and control groups (cgroups) collaborate to isolate and manage resources inside a Docker container. [5]",
+        "maxMarks": 5,
+        "sampleAnswer": "1. **Namespaces Role (Isolation)**: Namespaces establish virtual boundaries, wrapping processes so they cannot see resources of other processes. PID namespace isolates process IDs (making app process PID 1). Net namespace isolates networks (ports/interfaces). Mount isolates filesystems, etc.\n2. **Control Groups Role (Resource Limits)**: cgroups track, restrict, and allocate physical CPU, memory, network, and disk I/O usage. This prevents a single container from starving other containers (Noisy Neighbor problem).\n3. **Collaboration**: Together, namespaces isolate what a process can *see/access* while cgroups isolate what resource capacity a process can *consume*, establishing complete container sandboxing without hypervisors."
+      }
+    ]
+  },
+  {
+    "id": "exam_ai_4",
+    "title": "Accurate AI Exam 4 - Practice Paper",
+    "type": "AI Generated",
+    "questionsCount": 35,
+    "mcqs": [
+      {
+        "id": 1,
+        "question": "Under course definitions, which of the following is one of the five NIST essential characteristics of Cloud Computing?",
+        "options": [
+          "Broad network access",
+          "Multithreaded pipelines",
+          "Type-1 hyper-threading",
+          "None of the above"
+        ],
+        "answer": 0,
+        "explanation": "NIST essential characteristics are: On-demand self-service, Broad network access, Resource pooling, Rapid elasticity, and Measured service."
+      },
+      {
+        "id": 2,
+        "question": "What distributed memory programming model represents processes running asynchronously on separate nodes communicating explicitly via messages?",
+        "options": [
+          "OpenMP",
+          "Message Passing Interface (MPI)",
+          "SLURM batch scheduler",
+          "All of the above"
+        ],
+        "answer": 1,
+        "explanation": "MPI (Message Passing Interface) is designed for distributed-memory parallel systems, requiring processes to send and receive messages explicitly."
+      },
+      {
+        "id": 3,
+        "question": "Which of the following represents vertical scaling? (multiple choice - multiple answers possible)",
+        "options": [
+          "Upgrading a VM from 8 vCPUs to 32 vCPUs",
+          "Replacing a 2.0 GHz CPU with a 4.0 GHz CPU on a node",
+          "Adding three worker VMs to a cluster",
+          "Replicating database indexes across shards"
+        ],
+        "answer": [0, 1],
+        "explanation": "Vertical scaling (scaling up) involves increasing resource capacity (CPU, RAM, core speeds) of a single node rather than adding more servers."
+      },
+      {
+        "id": 4,
+        "question": "Which of the following are true about Gustafson-Barsis's Law? (multiple choice - multiple answers possible)",
+        "options": [
+          "It assumes that problem size scales as computing resources grow.",
+          "It counters Amdahl's fixed-workload speedup limitations.",
+          "It is optimized for single-threaded CPUs.",
+          "It assumes network bandwidth is infinite."
+        ],
+        "answer": [0, 1],
+        "explanation": "Gustafson-Barsis argues that users scale problems to fit larger cluster sizes, enabling linear speedups on scaled datasets, countering Amdahl's pessimistic ceilings."
+      },
+      {
+        "id": 5,
+        "question": "In CAP theorem, what does Partition Tolerance represent?",
+        "options": [
+          "The system operates correctly despite message loss or network splits.",
+          "The database automatically scales shards.",
+          "All nodes run identical OS versions.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Partition tolerance means the database cluster continues to run and serve requests even during connection dropouts or divisions between nodes."
+      },
+      {
+        "id": 6,
+        "question": "Which databases operate as CP systems under CAP? (multiple choice - multiple answers possible)",
+        "options": [
+          "Elasticsearch (rejects writes on partitioned side lacking quorum)",
+          "Paxos-based distributed key-value stores",
+          "CouchDB leaderless multi-master setups",
+          "Apache Cassandra dynamic consistency setups"
+        ],
+        "answer": [0, 1],
+        "explanation": "Elasticsearch and Paxos/Raft systems require majority quorums. Partitions blocking quorum abort writes, prioritizing consistency (C) over availability (A)."
+      },
+      {
+        "id": 7,
+        "question": "Which OpenStack compute daemon runs directly on hypervisor hosts to manage instances?",
+        "options": [
+          "nova-compute",
+          "nova-api",
+          "nova-scheduler",
+          "Keystone"
+        ],
+        "answer": 0,
+        "explanation": "nova-compute interfaces with hypervisors (like Libvirt/KVM) to instantiate, build, and destroy virtual instances on the physical node."
+      },
+      {
+        "id": 8,
+        "question": "Which services are managed by OpenStack Glance? (multiple choice - multiple answers possible)",
+        "options": [
+          "Virtual machine OS image templates",
+          "VM volume snapshots for backup restorations",
+          "Neutron virtual router definitions",
+          "Floating IP subnets"
+        ],
+        "answer": [0, 1],
+        "explanation": "Glance provides virtual machine image discovery, storing OS templates, kernel images, and volume snapshots used to spawn new hosts."
+      },
+      {
+        "id": 9,
+        "question": "What is the purpose of cgroups (Control Groups) in Linux container runtimes?",
+        "options": [
+          "To throttle and restrict resources (CPU, memory, storage I/O) consumed by container processes.",
+          "To isolate process IDs and network namespace interfaces.",
+          "To compile Fission functions into packages.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "cgroups limit resource allocations per container, preventing any single app from exhausting host resources (Noisy Neighbor issue)."
+      },
+      {
+        "id": 10,
+        "question": "What Docker instruction sets the default command that runs when a container starts up, which can be appended with CMD parameters?",
+        "options": [
+          "ENTRYPOINT",
+          "FROM",
+          "RUN",
+          "ENV"
+        ],
+        "answer": 0,
+        "explanation": "ENTRYPOINT sets the principal executable path for the container, and CMD provides default arguments that users can override at runtime."
+      },
+      {
+        "id": 11,
+        "question": "What is the primary benefit of Continuous Delivery (CD)?",
+        "options": [
+          "Automating the release of tested code changes to production or staging servers.",
+          "Compiling MPI code scripts on login nodes.",
+          "Synchronizing LDAP user accounts across CAs.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "CD automates deployment procedures, delivering tested builds directly to user-facing environments securely."
+      },
+      {
+        "id": 12,
+        "question": "In CI/CD scans, what is a Vulnerability?",
+        "options": [
+          "A confirmed security flaw in software code or package dependencies.",
+          "A warning about code formatting spacing.",
+          "A high-latency loop partition queue.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Vulnerabilities represent security bugs (like CVEs, credentials in plaintext) that permit immediate software compromise."
+      },
+      {
+        "id": 13,
+        "question": "What K8s object represents internal networking abstractions providing stable IPs and load-balancing?",
+        "options": [
+          "Service",
+          "Pod",
+          "Namespace",
+          "Ingress"
+        ],
+        "answer": 0,
+        "explanation": "Services establish stable endpoints for sets of Pods, load-balancing connections as pods are rescheduled."
+      },
+      {
+        "id": 14,
+        "question": "What is a Kubernetes Persistent Volume (PV)?",
+        "options": [
+          "The actual storage resource provisioned by cluster administrators.",
+          "A user request for container storage.",
+          "An ingress route trigger path.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "PVs represent hardware-backed storage resources (e.g. NFS volumes, AWS EBS drives) managed by the Kubernetes control plane."
+      },
+      {
+        "id": 15,
+        "question": "What are characteristics of RPC APIs? (multiple choice - multiple answers possible)",
+        "options": [
+          "Focus on execution verbs and remote actions (e.g. getUser()).",
+          "Tight coupling between client actions and server procedures.",
+          "Focus on noun-based resource path URLs.",
+          "Stateless resource representations."
+        ],
+        "answer": [0, 1],
+        "explanation": "RPC models expose remote procedures as verbs. Clients request specific action calls, tightly coupling the API interface to local code structures."
+      },
+      {
+        "id": 16,
+        "question": "In Fission, what is the role of PoolManager compared to NewDeploy?",
+        "options": [
+          "PoolManager specializes generic warm container pools; NewDeploy dynamically provisions dedicated Services and pods.",
+          "PoolManager requires Type-2 hypervisors; NewDeploy runs on Type-1 bare metal hosts.",
+          "PoolManager is for SLURM jobs; NewDeploy runs on OpenStack Nova compute nodes.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "PoolManager handles rapid, low-latency cold starts using generic pools. NewDeploy autoscales dedicated pods based on CPU/concurrency triggers."
+      },
+      {
+        "id": 17,
+        "question": "What Big Data characteristic refers to the diversity and format formats of datasets?",
+        "options": [
+          "Variety",
+          "Velocity",
+          "Volume",
+          "Veracity"
+        ],
+        "answer": 0,
+        "explanation": "Variety reflects format types, ranging from structured SQL relational schemas to semi-structured JSONs and unstructured media blobs."
+      },
+      {
+        "id": 18,
+        "question": "Which database setups are CA systems under CAP? (multiple choice - multiple answers possible)",
+        "options": [
+          "Federated PostgreSQL using 2-Phase Commit",
+          "Single-node PostgreSQL databases",
+          "CouchDB leaderless multi-master setups",
+          "Apache Cassandra cluster architectures"
+        ],
+        "answer": [0, 1],
+        "explanation": "CA databases mandate global consensus (like 2PC). If any node splits off (partition), writes fail, sacrificing partition tolerance (P)."
+      },
+      {
+        "id": 19,
+        "question": "In Elasticsearch, what is Dynamic Mapping?",
+        "options": [
+          "Automatically identifying field data types from JSON document content.",
+          "Automatically sharding indices across physical nodes.",
+          "Encrypting user certificates at runtime.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Dynamic mapping detects structures in new JSON records (e.g. strings, integers, dates), automatically formatting schema fields."
+      },
+      {
+        "id": 20,
+        "question": "Why does Elasticsearch restrict many-to-many document joins?",
+        "options": [
+          "Because cross-index relational joins are slow and degrade search latency across distributed cluster nodes.",
+          "Because joins violate Paxos consensus algorithms.",
+          "Because joined documents cannot be sharded.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "ES is optimized for fast search index scanning. Relational M:N joins across nodes degrade performance; users should denormalize data."
+      },
+      {
+        "id": 21,
+        "question": "According to Popek-Goldberg hypervisor virtualization theorem, a CPU is virtualizable if and only if:",
+        "options": [
+          "All sensitive instructions are a subset of privileged instructions.",
+          "It runs Docker containers natively in user space.",
+          "It has separate L1 and L2 cache lines.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "A processor is virtualizable only if all instructions that modify/read hardware settings (sensitive) trigger hardware traps when run in user space (privileged)."
+      },
+      {
+        "id": 22,
+        "question": "What is the role of a Type-1 hypervisor?",
+        "options": [
+          "Running directly on raw physical server hardware to manage VMs.",
+          "Running as an application on a host OS (hosted).",
+          "Deploying container namespaces inside Docker.",
+          "Managing SLURM sbatch queues."
+        ],
+        "answer": 0,
+        "explanation": "Type-1 hypervisors execute on raw server hardware (bare metal), controlling physical resources directly to optimize virtualization performance."
+      },
+      {
+        "id": 23,
+        "question": "In AWS VPC, what is an Internet Gateway?",
+        "options": [
+          "A VPC component that enables communication between public subnets and the internet.",
+          "An SSH gateway for database instances.",
+          "A Docker container bridge interface.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Internet Gateways route traffic from public VPC subnets to the public web, mapping private IPs to public IP records."
+      },
+      {
+        "id": 24,
+        "question": "What does a PKI Certification Authority digitally sign to establish trust?",
+        "options": [
+          "Public keys, validating key ownership records.",
+          "Private keys, decrypting SSH tunnels.",
+          "Glance image snapshots.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "CAs sign public certificates, binding user identities to keys to build cryptographic trust webs (like TLS/HTTPS)."
+      },
+      {
+        "id": 25,
+        "question": "What is a Shibboleth Identity Provider (IdP) in SAML SSO systems? (multiple choice - multiple answers possible)",
+        "options": [
+          "A server that authenticates users (e.g. login credentials) and issues SAML assertions.",
+          "An administrative hub managing core LDAP directory records.",
+          "A resources gatekeeper consuming AAF certificates.",
+          "An OpenStack database proxy node."
+        ],
+        "answer": [0, 1],
+        "explanation": "IdPs authenticate users against local directory records (LDAP/AD) and issue signed assertions containing user identity details."
+      },
+      {
+        "id": 26,
+        "question": "Compare supercomputer LINPACK benchmarks to HPC cluster architectures.",
+        "options": [
+          "Supercomputer speeds are measured in FLOPS; Clusters group individual hosts via LANs to execute parallel MPI code.",
+          "Supercomputers use local Docker volumes; Clusters use Type-2 hypervisors.",
+          "Supercomputers run Fission; Clusters run on AWS Nitro.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "Supercomputers are benchmarked on peak floating-point execution. Clusters link standard commodity systems via network frameworks to share workloads."
+      },
+      {
+        "id": 27,
+        "question": "In SLURM scripts, what specifies the queue partition to run a job?",
+        "options": [
+          "#SBATCH -p <partition>",
+          "#SBATCH -t <walltime>",
+          "#SBATCH -n <nodes>",
+          "None of the above"
+        ],
+        "answer": 0,
+        "explanation": "The `-p` directive specifies the target partition queue (like `sapphire` or `gpu`) for job scheduling."
+      },
+      {
+        "id": 28,
+        "question": "What operations represent vertical scaling? (multiple choice - multiple answers possible)",
+        "options": [
+          "Upgrading an EC2 VM instance type to double CPU cores",
+          "Increasing physical RAM allocated to a hypervisor host node",
+          "Adding five VM instances to a public cloud cluster",
+          "Replicating indexes across database clusters"
+        ],
+        "answer": [0, 1],
+        "explanation": "Vertical scaling upgrades resource sizes (RAM, cores, hardware power) of a single node rather than horizontal cluster expansions."
+      },
+      {
+        "id": 29,
+        "question": "In OpenStack, what component exposes REST APIs to receive VM creation requests?",
+        "options": [
+          "nova-api",
+          "nova-compute",
+          "nova-scheduler",
+          "Glance"
+        ],
+        "answer": 0,
+        "explanation": "nova-api accepts user REST requests, verifies authorizations, and coordinates VM operations using the AMQP messaging bus."
+      },
+      {
+        "id": 30,
+        "question": "What is the primary role of Docker Volumes?",
+        "options": [
+          "To provide persistent storage directories managed by the Docker daemon.",
+          "To expose containers directly to host interfaces.",
+          "To build multi-tenant hypervisor environments.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Volumes bypass copy-on-write container layers, storing data directly on the host to ensure persistence across container lifecycles."
+      },
+      {
+        "id": 31,
+        "question": "What K8s resource is a request for storage containing requirements (like size and access modes)?",
+        "options": [
+          "PersistentVolumeClaim (PVC)",
+          "PersistentVolume (PV)",
+          "StorageClass",
+          "Ingress"
+        ],
+        "answer": 0,
+        "explanation": "PVCs represent developer storage requests. The control plane matches claims to appropriate cluster PVs."
+      },
+      {
+        "id": 32,
+        "question": "Which HTTP method should be used to fetch resource representations from REST endpoints without modifying database state?",
+        "options": [
+          "GET",
+          "POST",
+          "PUT",
+          "DELETE"
+        ],
+        "answer": 0,
+        "explanation": "GET operations must be safe and idempotent, returning read-only representations without triggering side effects."
+      },
+      {
+        "id": 33,
+        "question": "What does a Fission route Trigger link?",
+        "options": [
+          "An HTTP request method and URL path to a target Fission Function.",
+          "A Cinder volume to an active Glance image template.",
+          "A sbatch script to a Sapphire queue partition.",
+          "None of the above."
+        ],
+        "answer": 0,
+        "explanation": "Routes translate incoming web calls (URL, method) into triggers that specialization daemons handle to run target functions."
+      },
+      {
+        "id": 34,
+        "question": "What Big Data characteristic refers to the velocity of dataset updates and real-time processing requirements?",
+        "options": [
+          "Velocity",
+          "Volume",
+          "Variety",
+          "Veracity"
+        ],
+        "answer": 0,
+        "explanation": "Velocity measures streaming speed (records per second) where systems must process inputs on the fly (e.g. IoT updates, log streams)."
+      },
+      {
+        "id": 35,
+        "question": "In CAP, how does CouchDB multi-master replication operate?",
+        "options": [
+          "As an AP system, permitting concurrent writes to any partition and reconciling conflicts asynchronously.",
+          "As a CA system, running two-phase commits to lock indices.",
+          "As a CP system, aborting writes if a partition loses its quorum.",
+          "All of the above."
+        ],
+        "answer": 0,
+        "explanation": "CouchDB allows independent writes on divided nodes. When connection recovers, replication shares document revision histories for eventual consistency checks."
+      }
+    ],
+    "shortAnswers": [
+      {
+        "id": 1,
+        "question": "Describe the security roles: Authentication, Authorisation, and Audit in distributed cloud security architectures. [5]",
+        "maxMarks": 5,
+        "sampleAnswer": "1. **Authentication**: Confirms user identity (e.g. verifying credentials, passwords, or public SSH keys). Prevents spoofing.\n2. **Authorisation**: Enforces permission bounds (what resources/actions the authenticated user can access). E.g. read-only permissions on a DB.\n3. **Audit**: Records logs of user operations (who did what, when, and where). Vital for threat hunting and tracking administrative commands."
+      },
+      {
+        "id": 2,
+        "question": "Explain how OpenStack Nova API, Scheduler, and Hypervisors collaborate to process a new virtual machine instance launch request. [5]",
+        "maxMarks": 5,
+        "sampleAnswer": "1. **nova-api**: Receives request REST calls, authenticates users with Keystone, registers database VM records, and publishes a build job to the AMQP message bus.\n2. **nova-scheduler**: Fetches the job, filters hypervisor hosts by resource requirements (cores, ram), and publishes the VM build command to a specific hypervisor's message queue.\n3. **nova-compute**: Active daemon on the host grabs the message and executes virtualization commands (using libvirt/QEMU) to allocate memory, spawn vCPUs, mount volumes, and boot the VM instance."
+      },
+      {
+        "id": 3,
+        "question": "Discuss the advantages and security risks of multi-tenant public cloud services compared to private cloud environments. [5]",
+        "maxMarks": 5,
+        "sampleAnswer": "1. **Advantages**: Public clouds offer rapid elasticity, low upfront costs (pay-as-you-go), and offload hardware maintenance. High physical reliability and geographical scaling options.\n2. **Security Risks**: Shared physical hardware introduces side-channel attacks (cache leakage, Meltdown). Misconfigurations can expose internal networks to co-hosted tenants. Data residency compliance is harder to control.\n3. **Private Cloud Comparison**: Private clouds offer complete physical hardware isolation, zero shared tenancy risks, and strict data control, but have high capital expense, scale peak loads poorly, and require dedicated administrative staff."
+      }
+    ]
+  }
 ];
