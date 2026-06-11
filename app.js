@@ -333,6 +333,123 @@ function adjustOptionLengths(options) {
   return adjusted;
 }
 
+// Generate incorrect quiz answers by modifying key terms in the correct answer to make them wrong but highly plausible
+function generateAlteredQuizOptions(correctAnswer, fallbackPool) {
+  const swapPairs = [
+    ["vertical", "horizontal"],
+    ["horizontal", "vertical"],
+    ["private", "public"],
+    ["public", "private"],
+    ["synchronous", "asynchronous"],
+    ["asynchronous", "synchronous"],
+    ["lightweight", "heavyweight"],
+    ["heavyweight", "lightweight"],
+    ["high", "low"],
+    ["low", "high"],
+    ["less", "more"],
+    ["more", "less"],
+    ["decoupled", "tightly coupled"],
+    ["tightly coupled", "decoupled"],
+    ["stateless", "stateful"],
+    ["stateful", "stateless"],
+    ["increase", "decrease"],
+    ["decrease", "increase"],
+    ["minimizing", "maximizing"],
+    ["maximizing", "minimizing"],
+    ["smallest", "largest"],
+    ["largest", "smallest"],
+    ["optimal", "suboptimal"],
+    ["suboptimal", "optimal"],
+    ["consistent", "inconsistent"],
+    ["inconsistent", "consistent"],
+    ["available", "unavailable"],
+    ["unavailable", "available"],
+    ["distributed", "centralized"],
+    ["centralized", "distributed"],
+    ["reliability", "unreliability"],
+    ["unreliability", "reliability"],
+    ["without", "with"],
+    ["with", "without"],
+    ["cannot", "can"],
+    ["can", "cannot"],
+    ["never", "always"],
+    ["always", "never"],
+    ["automatically", "manually"],
+    ["manually", "automatically"]
+  ];
+
+  let variations = [];
+  
+  // Try generating 3 distinct variants by performing word swaps
+  for (let attempt = 0; attempt < 25; attempt++) {
+    let text = correctAnswer;
+    let altered = false;
+    
+    // Shuffle the swap pairs to get different swaps per attempt
+    const shuffledPairs = shuffle([...swapPairs]);
+    for (const [from, to] of shuffledPairs) {
+      const regex = new RegExp(`\\b${from}\\b`, 'gi');
+      if (regex.test(text)) {
+        text = text.replace(regex, (match) => {
+          if (match === match.toUpperCase()) return to.toUpperCase();
+          if (match[0] === match[0].toUpperCase()) return to[0].toUpperCase() + to.substring(1);
+          return to;
+        });
+        altered = true;
+        
+        // Randomly apply only 1-2 swaps to make it subtle
+        if (Math.random() > 0.6) break;
+      }
+    }
+    
+    if (altered && text !== correctAnswer && !variations.includes(text)) {
+      variations.push(text);
+      if (variations.length >= 3) break;
+    }
+  }
+
+  // If swaps didn't produce 3 variants, try basic grammatical negations
+  if (variations.length < 3) {
+    const negations = [
+      [" is ", " is not "],
+      [" are ", " are not "],
+      [" does ", " does not "],
+      [" do ", " do not "],
+      [" will ", " will not "],
+      [" can ", " cannot "],
+      [" should ", " should not "]
+    ];
+
+    for (let attempt = 0; attempt < 15; attempt++) {
+      let text = correctAnswer;
+      let altered = false;
+      const shuffledNegs = shuffle([...negations]);
+      for (const [from, to] of shuffledNegs) {
+        if (text.includes(from)) {
+          text = text.replace(new RegExp(from, 'g'), to);
+          altered = true;
+          if (Math.random() > 0.5) break;
+        }
+      }
+      if (altered && text !== correctAnswer && !variations.includes(text)) {
+        variations.push(text);
+        if (variations.length >= 3) break;
+      }
+    }
+  }
+
+  // Fall back to topically related, length-balanced answers from other cards if we couldn't make 3 modifications
+  const fallbacksUsed = [];
+  while (variations.length < 3) {
+    const fallback = fallbackPool.shift();
+    if (!fallback) break;
+    variations.push(fallback);
+    fallbacksUsed.push(fallback);
+  }
+
+  return variations.slice(0, 3);
+}
+
 // Render the current active flashcard
 function renderActiveCard() {
   const card = state.studyCards[state.studyIndex];
@@ -532,7 +649,7 @@ function renderQuizQuestion() {
   document.getElementById("quiz-question-tag").textContent = `Week ${card.week} • ${card.topic}`;
   document.getElementById("quiz-question-text").textContent = card.question;
   
-  // Generate Options (1 correct, 3 incorrect random answers)
+  // Generate Options (1 correct, 3 incorrect answers)
   const choices = [card.answer];
   
   // Gather unique incorrect answers from other cards based on relatedness (week/topic) and similar length
@@ -569,20 +686,19 @@ function renderQuizQuestion() {
   // Sort descending by score
   scoredOtherCards.sort((a, b) => b.score - a.score);
 
-  // Extract unique answers in scored order
+  // Extract unique answers in scored order for fallback use
   const uniqueAnswersPool = [];
   const seenAnswers = new Set([card.answer]);
   for (const item of scoredOtherCards) {
     if (!seenAnswers.has(item.answer)) {
       seenAnswers.add(item.answer);
       uniqueAnswersPool.push(item.answer);
-      if (uniqueAnswersPool.length >= 10) break; // Keep the top 10 best options
     }
   }
 
-  // Shuffle the pool and select 3 unique options
-  const otherAnswers = shuffle(uniqueAnswersPool).slice(0, 3);
-  for (const ans of otherAnswers) {
+  // Generate incorrect options derived from the correct answer or fallback pool
+  const incorrectChoices = generateAlteredQuizOptions(card.answer, uniqueAnswersPool);
+  for (const ans of incorrectChoices) {
     choices.push(ans);
   }
   
@@ -597,11 +713,8 @@ function renderQuizQuestion() {
     const optBtn = document.createElement("button");
     optBtn.className = "quiz-option";
     
-    // Clean markdown text for rendering choices cleanly
-    let plainText = choice.replace(/\*\*/g, '').replace(/\*/g, '');
-    if (plainText.length > 180) {
-      plainText = plainText.substring(0, 180) + "...";
-    }
+    // Clean markdown text for rendering choices cleanly (without length truncation)
+    const plainText = choice.replace(/\*\*/g, '').replace(/\*/g, '');
     
     optBtn.textContent = plainText;
     optBtn.dataset.original = choice; // Keep track of full original string

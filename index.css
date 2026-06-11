@@ -701,9 +701,9 @@ h1 {
   text-align: left;
   cursor: pointer;
   transition: var(--transition-smooth);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: 100%;
+  display: block;
+  word-break: break-word;
 }
 
 .quiz-option:hover {
