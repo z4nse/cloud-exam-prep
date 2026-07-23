@@ -1,6 +1,6 @@
-# cloud-exam-prep
+# exam-prep
 
-Flashcard and practice exam app for COMP90024 (Cluster & Cloud Computing) at UniMelb.
+AI Generated Flashcard and practice exam app for COMP90024
 
 Live at https://z4nse.github.io/cloud-exam-prep/
 
