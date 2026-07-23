@@ -16,12 +16,13 @@ const DECK_CONFIG = {
 
 // Application State
 let state = {
+  activeSubject: localStorage.getItem("cloudmaster_active_subject") || "contract_a",
   activeView: "dashboard",
   ratings: {}, // Maps cardId -> "easy" | "medium" | "hard"
   quizHistory: [], // Array of scores (percentages)
   
   // Active study deck variables
-  studyDeck: null, // "all" or week number (1-10)
+  studyDeck: null, // "all" or week number (1-10/11)
   studyCards: [],
   studyIndex: 0,
   cardFlipped: false,
@@ -48,37 +49,127 @@ let state = {
   examTimerInterval: null,
   examHistory: [],
   examMcqAnswers: [],
-  examCurrentShuffledOptions: []
+  examCurrentShuffledOptions: [],
+
+  // Active MC Quiz variables
+  mcQuizActive: false,
+  mcQuizQuestions: [],
+  mcQuizIndex: 0,
+  mcQuizScore: 0,
+  mcQuizAnswersChecked: false,
+  mcQuizSelectedIndices: [],
+  mcQuizCurrentShuffledOptions: []
 };
+
+// Subject Helper Functions
+function getActiveCards() {
+  if (state.activeSubject === "contract_a") {
+    return window.CONTRACT_A_FLASHCARDS || [];
+  }
+  return window.FLASHCARDS || [];
+}
+
+function getDecksConfig() {
+  if (state.activeSubject === "contract_a") {
+    return window.CONTRACT_A_DECKS || {};
+  }
+  return DECK_CONFIG;
+}
 
 // Initialize Application
 document.addEventListener("DOMContentLoaded", () => {
+  initSubjectSwitcher();
   loadProgress();
   initRouter();
+  populateWeekFilter();
   renderDecks();
   updateStats();
   initCardFlipping();
   initCardRating();
   initBrowserSearch();
   initQuizFlow();
+  initMCQuizFlow(); // Initialize MC Quiz handlers
   initExamFlow(); // Initialize practice exams handlers
   initKeyboardShortcuts();
   initDistractionWidget(); // Initialize daydream distraction loops
 });
 
+function initSubjectSwitcher() {
+  const select = document.getElementById("subject-select");
+  if (!select) return;
+  
+  const savedSubject = localStorage.getItem("cloudmaster_active_subject") || "contract_a";
+  state.activeSubject = savedSubject;
+  select.value = savedSubject;
+  
+  updateSubjectUI(savedSubject);
+  
+  select.addEventListener("change", (e) => {
+    const newSubject = e.target.value;
+    state.activeSubject = newSubject;
+    localStorage.setItem("cloudmaster_active_subject", newSubject);
+    
+    updateSubjectUI(newSubject);
+    loadProgress();
+    populateWeekFilter();
+    renderDecks();
+    updateStats();
+    
+    if (state.activeView === "browser") {
+      renderCardBrowser();
+    } else if (state.activeView === "study") {
+      startStudySession("all");
+    }
+  });
+}
+
+function updateSubjectUI(subject) {
+  const brandName = document.getElementById("brand-name");
+  const brandLogo = document.getElementById("brand-logo");
+  
+  if (subject === "contract_a") {
+    if (brandName) brandName.textContent = "Contract A (Vic)";
+    if (brandLogo) {
+      brandLogo.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 9l9-6 9 6M3 9l9 6 9-6M3 9v6l9 6 9-6V9"></path></svg>`;
+    }
+    document.title = "Principles of Contract A | Victorian Case Flashcards";
+  } else {
+    if (brandName) brandName.textContent = "COMP90024";
+    if (brandLogo) {
+      brandLogo.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>`;
+    }
+    document.title = "CloudMaster | Cluster & Cloud Computing Study App";
+  }
+}
+
 // Load state from LocalStorage
 function loadProgress() {
-  const savedRatings = localStorage.getItem("cloudmaster_ratings");
+  const ratingKey = state.activeSubject === "contract_a" ? "contract_a_ratings" : "cloudmaster_ratings";
+  const savedRatings = localStorage.getItem(ratingKey);
   if (savedRatings) {
-    state.ratings = JSON.parse(savedRatings);
+    try {
+      state.ratings = JSON.parse(savedRatings);
+    } catch(e) {
+      state.ratings = {};
+    }
+  } else {
+    state.ratings = {};
   }
   
-  const savedQuizHistory = localStorage.getItem("cloudmaster_quiz_history");
+  const quizKey = state.activeSubject === "contract_a" ? "contract_a_quiz_history" : "cloudmaster_quiz_history";
+  const savedQuizHistory = localStorage.getItem(quizKey);
   if (savedQuizHistory) {
-    state.quizHistory = JSON.parse(savedQuizHistory);
+    try {
+      state.quizHistory = JSON.parse(savedQuizHistory);
+    } catch(e) {
+      state.quizHistory = [];
+    }
+  } else {
+    state.quizHistory = [];
   }
 
-  const savedExamHistory = localStorage.getItem("cloudmaster_exam_history");
+  const examKey = state.activeSubject === "contract_a" ? "contract_a_exam_history" : "cloudmaster_exam_history";
+  const savedExamHistory = localStorage.getItem(examKey);
   if (savedExamHistory) {
     try {
       const parsed = JSON.parse(savedExamHistory);
@@ -93,10 +184,50 @@ function loadProgress() {
 
 // Save state to LocalStorage
 function saveProgress() {
-  localStorage.setItem("cloudmaster_ratings", JSON.stringify(state.ratings));
-  localStorage.setItem("cloudmaster_quiz_history", JSON.stringify(state.quizHistory));
-  localStorage.setItem("cloudmaster_exam_history", JSON.stringify(state.examHistory));
+  const ratingKey = state.activeSubject === "contract_a" ? "contract_a_ratings" : "cloudmaster_ratings";
+  localStorage.setItem(ratingKey, JSON.stringify(state.ratings));
+  
+  const quizKey = state.activeSubject === "contract_a" ? "contract_a_quiz_history" : "cloudmaster_quiz_history";
+  localStorage.setItem(quizKey, JSON.stringify(state.quizHistory));
+  
+  const examKey = state.activeSubject === "contract_a" ? "contract_a_exam_history" : "cloudmaster_exam_history";
+  localStorage.setItem(examKey, JSON.stringify(state.examHistory));
+  
   updateStats();
+}
+
+// Populate Card Browser Filter Dropdown
+function populateWeekFilter() {
+  const select = document.getElementById("browser-filter-week");
+  if (!select) return;
+  select.innerHTML = "";
+  
+  const activeDecks = getDecksConfig();
+  if (state.activeSubject === "contract_a") {
+    const defaultOpt = document.createElement("option");
+    defaultOpt.value = "all";
+    defaultOpt.textContent = "All Topics (60+ Cases)";
+    select.appendChild(defaultOpt);
+    
+    for (const [topicId, deck] of Object.entries(activeDecks)) {
+      const opt = document.createElement("option");
+      opt.value = topicId;
+      opt.textContent = deck.name;
+      select.appendChild(opt);
+    }
+  } else {
+    const defaultOpt = document.createElement("option");
+    defaultOpt.value = "all";
+    defaultOpt.textContent = "All Weeks";
+    select.appendChild(defaultOpt);
+    
+    for (const [weekNum, deck] of Object.entries(activeDecks)) {
+      const opt = document.createElement("option");
+      opt.value = weekNum;
+      opt.textContent = deck.name;
+      select.appendChild(opt);
+    }
+  }
 }
 
 // Simple Page Router
@@ -112,6 +243,7 @@ function initRouter() {
   // Back buttons
   document.getElementById("study-back-btn").addEventListener("click", () => switchView("view-dashboard"));
   document.getElementById("quiz-back-btn").addEventListener("click", () => switchView("view-dashboard"));
+  document.getElementById("mc-quiz-back-btn").addEventListener("click", () => switchView("view-dashboard"));
 }
 
 function switchView(viewId) {
@@ -155,6 +287,8 @@ function switchView(viewId) {
     startStudySession("all");
   } else if (state.activeView === "quiz") {
     resetQuizSetup();
+  } else if (state.activeView === "mc-quiz") {
+    resetMCQuizSetup();
   } else if (state.activeView === "exams") {
     renderExamsView();
   }
@@ -162,10 +296,11 @@ function switchView(viewId) {
 
 // Update Global Statistics Widget
 function updateStats() {
-  const total = window.FLASHCARDS.length;
+  const activeCards = getActiveCards();
+  const total = activeCards.length;
   document.getElementById("stat-total-cards").textContent = total;
   
-  const easyCount = Object.values(state.ratings).filter(r => r === "easy").length;
+  const easyCount = activeCards.filter(c => state.ratings[c.id] === "easy").length;
   document.getElementById("stat-easy-cards").textContent = easyCount;
   
   // Calculate average quiz accuracy
@@ -177,7 +312,7 @@ function updateStats() {
   }
   
   // Sidebar progress bar
-  const masteredRatio = (easyCount / total) * 100;
+  const masteredRatio = total > 0 ? (easyCount / total) * 100 : 0;
   document.getElementById("overall-progress-bar").style.width = masteredRatio + "%";
   document.getElementById("overall-progress-text").textContent = Math.round(masteredRatio) + "%";
   document.getElementById("overall-ratio-text").textContent = `${easyCount}/${total} Mastered`;
@@ -188,21 +323,24 @@ function renderDecks() {
   const decksContainer = document.getElementById("decks-container");
   decksContainer.innerHTML = "";
   
+  const activeCards = getActiveCards();
+  const activeDecks = getDecksConfig();
+  
   // First item: All Decks Combined
-  const allCards = window.FLASHCARDS;
-  const allEasy = allCards.filter(c => state.ratings[c.id] === "easy").length;
-  const allMed = allCards.filter(c => state.ratings[c.id] === "medium").length;
+  const allEasy = activeCards.filter(c => state.ratings[c.id] === "easy").length;
+  const allMed = activeCards.filter(c => state.ratings[c.id] === "medium").length;
   const allCompleted = allEasy + allMed;
-  const allPercent = allCards.length ? Math.round((allCompleted / allCards.length) * 100) : 0;
+  const allPercent = activeCards.length ? Math.round((allCompleted / activeCards.length) * 100) : 0;
   
   const allDeckElement = document.createElement("div");
   allDeckElement.className = "deck-card";
+  const syllabusTitle = state.activeSubject === "contract_a" ? "All Principles of Contract A Cases" : "All Cloud & Cluster Computing Cards";
   allDeckElement.innerHTML = `
     <span class="deck-week">Full Syllabus</span>
-    <span class="deck-name">All Cloud & Cluster Computing Cards</span>
+    <span class="deck-name">${syllabusTitle}</span>
     <div class="deck-footer">
       <div class="deck-stats">
-        <span class="deck-badge">${allCards.length} Cards</span>
+        <span class="deck-badge">${activeCards.length} Cards</span>
         <span>${allPercent}% studied</span>
       </div>
       <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
@@ -213,10 +351,10 @@ function renderDecks() {
   allDeckElement.addEventListener("click", () => startStudySession("all"));
   decksContainer.appendChild(allDeckElement);
   
-  // Populating Weeks 1 to 10
-  for (let week = 1; week <= 10; week++) {
-    const config = DECK_CONFIG[week];
-    const weekCards = window.FLASHCARDS.filter(c => c.week === week);
+  // Populating Weeks/Topics
+  for (const [deckKey, config] of Object.entries(activeDecks)) {
+    const keyNum = parseInt(deckKey);
+    const weekCards = activeCards.filter(c => c.week === keyNum);
     if (weekCards.length === 0) continue;
     
     const weekEasy = weekCards.filter(c => state.ratings[c.id] === "easy").length;
@@ -226,8 +364,9 @@ function renderDecks() {
     
     const deckElement = document.createElement("div");
     deckElement.className = "deck-card";
+    const weekTagText = state.activeSubject === "contract_a" ? `Topic ${keyNum} • ${config.badge}` : `Week ${keyNum} • ${config.badge}`;
     deckElement.innerHTML = `
-      <span class="deck-week">Week ${week} • ${config.badge}</span>
+      <span class="deck-week">${weekTagText}</span>
       <span class="deck-name">${config.name}</span>
       <div class="deck-footer">
         <div class="deck-stats">
@@ -239,7 +378,7 @@ function renderDecks() {
         </svg>
       </div>
     `;
-    deckElement.addEventListener("click", () => startStudySession(week));
+    deckElement.addEventListener("click", () => startStudySession(keyNum));
     decksContainer.appendChild(deckElement);
   }
 }
@@ -250,10 +389,11 @@ function startStudySession(deckId) {
   state.studyIndex = 0;
   state.cardFlipped = false;
   
+  const activeCards = getActiveCards();
   if (deckId === "all") {
-    state.studyCards = shuffle([...window.FLASHCARDS]);
+    state.studyCards = shuffle([...activeCards]);
   } else {
-    state.studyCards = shuffle(window.FLASHCARDS.filter(c => c.week === parseInt(deckId)));
+    state.studyCards = shuffle(activeCards.filter(c => c.week === parseInt(deckId)));
   }
   
   if (state.studyCards.length === 0) {
@@ -461,9 +601,18 @@ function renderActiveCard() {
   state.cardFlipped = false;
   
   // Set Tag
-  const weekLabel = `Week ${card.week} | ${card.topic}`;
-  document.getElementById("card-tag-front").textContent = weekLabel;
-  document.getElementById("card-tag-back").textContent = weekLabel;
+  let topicTag = "";
+  if (state.activeSubject === "contract_a") {
+    topicTag = `Topic ${card.week}: ${card.topic}`;
+    if (card.court) {
+      topicTag += ` [${card.court}]`;
+    }
+  } else {
+    topicTag = `Week ${card.week} | ${card.topic}`;
+  }
+  
+  document.getElementById("card-tag-front").textContent = topicTag;
+  document.getElementById("card-tag-back").textContent = topicTag;
   
   // Set Content
   document.getElementById("card-question-text").textContent = card.question;
@@ -474,6 +623,8 @@ function renderActiveCard() {
   answerHtml = answerHtml.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   // Replace *italic*
   answerHtml = answerHtml.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  // Replace newlines with <br>
+  answerHtml = answerHtml.replace(/\n/g, '<br>');
   
   document.getElementById("card-answer-text").innerHTML = answerHtml;
   
@@ -559,9 +710,10 @@ function renderCardBrowser() {
   const weekVal = document.getElementById("browser-filter-week").value;
   
   browserList.innerHTML = "";
+  const activeCards = getActiveCards();
   
-  const filtered = window.FLASHCARDS.filter(c => {
-    // Filter by week
+  const filtered = activeCards.filter(c => {
+    // Filter by week/topic
     if (weekVal !== "all" && c.week !== parseInt(weekVal)) return false;
     
     // Search filter
@@ -569,7 +721,8 @@ function renderCardBrowser() {
       const inQuestion = c.question.toLowerCase().includes(searchVal);
       const inAnswer = c.answer.toLowerCase().includes(searchVal);
       const inTopic = c.topic.toLowerCase().includes(searchVal);
-      return inQuestion || inAnswer || inTopic;
+      const inCaseName = c.caseName ? c.caseName.toLowerCase().includes(searchVal) : false;
+      return inQuestion || inAnswer || inTopic || inCaseName;
     }
     
     return true;
@@ -587,10 +740,21 @@ function renderCardBrowser() {
     let answerHtml = card.answer;
     answerHtml = answerHtml.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     answerHtml = answerHtml.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    answerHtml = answerHtml.replace(/\n/g, '<br>');
+    
+    let courtBadgeHtml = "";
+    if (card.court) {
+      const courtLower = card.court.toLowerCase();
+      courtBadgeHtml = `<span class="court-badge ${courtLower}">${card.court}</span>`;
+    }
+    
+    const topicHeader = state.activeSubject === "contract_a" 
+      ? `Topic ${card.week}: ${card.topic}` 
+      : `Week ${card.week} • ${card.topic}`;
     
     cardEl.innerHTML = `
       <div class="browser-card-header">
-        <span class="browser-card-week">Week ${card.week} • ${card.topic}</span>
+        <span class="browser-card-week">${topicHeader}${courtBadgeHtml}</span>
         <span style="font-size:0.75rem; color: var(--text-muted); text-transform: uppercase;">Rating: ${state.ratings[card.id] || "unreviewed"}</span>
       </div>
       <div class="browser-card-question">${card.question}</div>
@@ -626,7 +790,8 @@ function startQuiz() {
   state.quizScore = 0;
   
   // Select 10 random cards for the quiz
-  state.quizQuestions = shuffle([...window.FLASHCARDS]).slice(0, 10);
+  const activeCards = getActiveCards();
+  state.quizQuestions = shuffle([...activeCards]).slice(0, 10);
   
   document.getElementById("quiz-setup-panel").style.display = "none";
   document.getElementById("quiz-results-panel").style.display = "none";
@@ -647,14 +812,16 @@ function renderQuizQuestion() {
   document.getElementById("quiz-score-indicator").textContent = `Current Score: ${state.quizScore}/${state.quizIndex}`;
   
   // Set question values
-  document.getElementById("quiz-question-tag").textContent = `Week ${card.week} • ${card.topic}`;
+  const tagText = state.activeSubject === "contract_a" ? `Topic ${card.week} • ${card.topic}` : `Week ${card.week} • ${card.topic}`;
+  document.getElementById("quiz-question-tag").textContent = tagText;
   document.getElementById("quiz-question-text").textContent = card.question;
   
   // Generate Options (1 correct, 3 incorrect answers)
   const choices = [card.answer];
   
   // Gather unique incorrect answers from other cards based on relatedness (week/topic) and similar length
-  const otherCards = window.FLASHCARDS.filter(c => c.id !== card.id);
+  const activeCards = getActiveCards();
+  const otherCards = activeCards.filter(c => c.id !== card.id);
   const scoredOtherCards = otherCards.map(c => {
     let score = 0;
     
@@ -1455,4 +1622,241 @@ function initDistractionWidget() {
     btnToggle.textContent = collapsedNow ? "🙈" : "👁️";
     localStorage.setItem("cloudmaster_distraction_collapsed", collapsedNow ? "true" : "false");
   });
+}
+
+// --- MC QUIZ MODE LOGIC ---
+function resetMCQuizSetup() {
+  document.getElementById("mc-quiz-setup-panel").style.display = "block";
+  document.getElementById("mc-quiz-active-panel").style.display = "none";
+  document.getElementById("mc-quiz-results-panel").style.display = "none";
+  state.mcQuizActive = false;
+}
+
+function initMCQuizFlow() {
+  document.getElementById("start-mc-quiz-btn").addEventListener("click", startMCQuiz);
+  document.getElementById("mc-quiz-submit-btn").addEventListener("click", checkMCQuizAnswer);
+  document.getElementById("mc-quiz-next-btn").addEventListener("click", nextMCQuizQuestion);
+  document.getElementById("mc-quiz-retry-btn").addEventListener("click", startMCQuiz);
+  document.getElementById("mc-quiz-close-btn").addEventListener("click", () => switchView("view-dashboard"));
+}
+
+function startMCQuiz() {
+  const weekVal = document.getElementById("mc-quiz-setup-week").value;
+  const countVal = document.getElementById("mc-quiz-setup-count").value;
+  
+  if (!window.MC_QUIZ_QUESTIONS || !Array.isArray(window.MC_QUIZ_QUESTIONS)) {
+    alert("MC Quiz database not found. Please ensure mc_quiz_data.js is loaded correctly.");
+    return;
+  }
+
+  let pool = [...window.MC_QUIZ_QUESTIONS];
+  if (weekVal !== "all") {
+    pool = pool.filter(q => q.week === parseInt(weekVal, 10));
+  }
+  
+  if (pool.length === 0) {
+    alert("No questions found for the selected criteria.");
+    return;
+  }
+  
+  shuffle(pool);
+  
+  let count = pool.length;
+  if (countVal !== "all") {
+    count = Math.min(parseInt(countVal, 10), pool.length);
+  }
+  
+  state.mcQuizActive = true;
+  state.mcQuizQuestions = pool.slice(0, count);
+  state.mcQuizIndex = 0;
+  state.mcQuizScore = 0;
+  state.mcQuizAnswersChecked = false;
+  state.mcQuizSelectedIndices = [];
+  state.mcQuizCurrentShuffledOptions = [];
+  
+  document.getElementById("mc-quiz-setup-panel").style.display = "none";
+  document.getElementById("mc-quiz-results-panel").style.display = "none";
+  document.getElementById("mc-quiz-active-panel").style.display = "block";
+  
+  renderMCQuizQuestion();
+}
+
+function renderMCQuizQuestion() {
+  const mcq = state.mcQuizQuestions[state.mcQuizIndex];
+  if (!mcq) return;
+  
+  state.mcQuizAnswersChecked = false;
+  state.mcQuizSelectedIndices = [];
+  
+  // Update header text
+  const total = state.mcQuizQuestions.length;
+  document.getElementById("mc-quiz-header-status").textContent = `Question ${state.mcQuizIndex + 1} of ${total}`;
+  document.getElementById("mc-quiz-score-indicator").textContent = `Current Score: ${state.mcQuizScore}/${state.mcQuizIndex}`;
+  
+  // Set question tags and text
+  const isMulti = Array.isArray(mcq.answer);
+  const multiText = isMulti ? " (Select all that apply)" : "";
+  document.getElementById("mc-quiz-question-tag").textContent = `Week ${mcq.week} • Deep MCQ${multiText}`;
+  document.getElementById("mc-quiz-question-text").textContent = mcq.question;
+  
+  // Apply anti-guessing option length equalization
+  const paddedOptions = adjustOptionLengths(mcq.options);
+  
+  // Shuffling options while keeping "all of the above" or "none of the above" at the end
+  const normalOpts = [];
+  const aboveOpts = [];
+  
+  paddedOptions.forEach((option, idx) => {
+    const lower = option.toLowerCase();
+    if (lower.includes("all of the above") || lower.includes("all of above") || lower.includes("none of the above") || lower.includes("none of above")) {
+      aboveOpts.push({ text: option, originalIdx: idx });
+    } else {
+      normalOpts.push({ text: option, originalIdx: idx });
+    }
+  });
+  
+  shuffle(normalOpts);
+  state.mcQuizCurrentShuffledOptions = [...normalOpts, ...aboveOpts];
+  
+  // Render option buttons
+  const optionsContainer = document.getElementById("mc-quiz-options-container");
+  optionsContainer.innerHTML = "";
+  
+  state.mcQuizCurrentShuffledOptions.forEach((optObj, shuffledIdx) => {
+    const optBtn = document.createElement("button");
+    optBtn.className = "quiz-option";
+    optBtn.textContent = optObj.text;
+    
+    // Checkbox / radio visual indicator
+    const indicator = document.createElement("span");
+    indicator.className = "multi-select-indicator";
+    indicator.style.border = "2px solid var(--glass-border)";
+    if (isMulti) {
+      indicator.style.borderRadius = "4px"; // square for multi
+    } else {
+      indicator.style.borderRadius = "50%"; // circle for single
+    }
+    indicator.style.width = "18px";
+    indicator.style.height = "18px";
+    indicator.style.display = "inline-block";
+    indicator.style.marginRight = "1rem";
+    indicator.style.flexShrink = "0";
+    optBtn.prepend(indicator);
+    optBtn.style.display = "flex";
+    optBtn.style.alignItems = "center";
+    
+    optBtn.addEventListener("click", () => {
+      if (state.mcQuizAnswersChecked) return;
+      
+      if (isMulti) {
+        // Multi-select toggle
+        const pos = state.mcQuizSelectedIndices.indexOf(shuffledIdx);
+        if (pos > -1) {
+          state.mcQuizSelectedIndices.splice(pos, 1);
+          optBtn.classList.remove("selected");
+          optBtn.querySelector(".multi-select-indicator").style.background = "none";
+        } else {
+          state.mcQuizSelectedIndices.push(shuffledIdx);
+          optBtn.classList.add("selected");
+          optBtn.querySelector(".multi-select-indicator").style.background = "var(--primary)";
+        }
+      } else {
+        // Single-select choice (exclusive)
+        const allOpts = optionsContainer.querySelectorAll(".quiz-option");
+        allOpts.forEach(btn => {
+          btn.classList.remove("selected");
+          btn.querySelector(".multi-select-indicator").style.background = "none";
+        });
+        state.mcQuizSelectedIndices = [shuffledIdx];
+        optBtn.classList.add("selected");
+        optBtn.querySelector(".multi-select-indicator").style.background = "var(--primary)";
+      }
+      
+      document.getElementById("mc-quiz-submit-btn").disabled = (state.mcQuizSelectedIndices.length === 0);
+    });
+    
+    optionsContainer.appendChild(optBtn);
+  });
+  
+  document.getElementById("mc-quiz-submit-btn").style.display = "block";
+  document.getElementById("mc-quiz-submit-btn").disabled = true;
+  document.getElementById("mc-quiz-next-btn").style.display = "none";
+  document.getElementById("mc-quiz-feedback-box").style.display = "none";
+}
+
+function checkMCQuizAnswer() {
+  state.mcQuizAnswersChecked = true;
+  const mcq = state.mcQuizQuestions[state.mcQuizIndex];
+  
+  const correctOriginalIndices = Array.isArray(mcq.answer) ? mcq.answer : [mcq.answer];
+  const selectedOriginalIndices = state.mcQuizSelectedIndices.map(shIdx => state.mcQuizCurrentShuffledOptions[shIdx].originalIdx);
+  
+  const options = document.querySelectorAll("#mc-quiz-options-container .quiz-option");
+  
+  // Grading logic
+  const allCorrectSelected = correctOriginalIndices.every(idx => selectedOriginalIndices.includes(idx));
+  const noIncorrectSelected = selectedOriginalIndices.every(idx => correctOriginalIndices.includes(idx));
+  const isCorrect = (allCorrectSelected && noIncorrectSelected && correctOriginalIndices.length === selectedOriginalIndices.length);
+  
+  if (isCorrect) {
+    state.mcQuizScore++;
+  }
+  
+  options.forEach((btn, shIdx) => {
+    btn.disabled = true;
+    const origIdx = state.mcQuizCurrentShuffledOptions[shIdx].originalIdx;
+    const isCorrectOption = correctOriginalIndices.includes(origIdx);
+    const isSelectedOption = selectedOriginalIndices.includes(origIdx);
+    
+    if (isCorrectOption) {
+      btn.classList.add("correct");
+      const indicator = btn.querySelector(".multi-select-indicator");
+      if (indicator) {
+        indicator.style.background = "var(--color-easy)";
+      }
+    } else if (isSelectedOption) {
+      btn.classList.add("incorrect");
+      const indicator = btn.querySelector(".multi-select-indicator");
+      if (indicator) {
+        indicator.style.background = "var(--color-hard)";
+      }
+    }
+  });
+  
+  // Display feedback with explanation
+  const feedbackBox = document.getElementById("mc-quiz-feedback-box");
+  feedbackBox.innerHTML = `<strong>Explanation:</strong><br>${mcq.explanation}`;
+  feedbackBox.style.display = "block";
+  
+  document.getElementById("mc-quiz-submit-btn").style.display = "none";
+  document.getElementById("mc-quiz-next-btn").style.display = "block";
+  document.getElementById("mc-quiz-score-indicator").textContent = `Current Score: ${state.mcQuizScore}/${state.mcQuizIndex + 1}`;
+}
+
+function nextMCQuizQuestion() {
+  state.mcQuizIndex++;
+  const total = state.mcQuizQuestions.length;
+  if (state.mcQuizIndex >= total) {
+    showMCQuizResults();
+  } else {
+    renderMCQuizQuestion();
+  }
+}
+
+function showMCQuizResults() {
+  document.getElementById("mc-quiz-active-panel").style.display = "none";
+  document.getElementById("mc-quiz-results-panel").style.display = "block";
+  
+  const total = state.mcQuizQuestions.length;
+  const percentage = Math.round((state.mcQuizScore / total) * 100);
+  
+  document.getElementById("mc-quiz-results-summary").textContent = `You scored ${state.mcQuizScore} out of ${total} (${percentage}%).`;
+  
+  let title = "Practice Completed!";
+  if (percentage >= 90) title = "🏆 Perfect Score! Master Class!";
+  else if (percentage >= 70) title = "🌟 Excellent Progress!";
+  else if (percentage >= 50) title = "📖 Keep Studying!";
+  else title = "❌ Focus on weak areas and try again!";
+  
+  document.getElementById("mc-quiz-results-title").textContent = title;
 }
